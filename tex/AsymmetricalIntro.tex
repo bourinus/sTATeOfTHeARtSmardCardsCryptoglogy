@@ -1,0 +1,229 @@
+\newpage 
+\section{RSA: description}
+\label{Asymmetricalintro}
+
+\subsection{References}
+
+More in \cite{book-1996-menezes} :
+\begin{itemize} 
+	\item fundamentals, chapter 2: "number theory", "finite fileds", "abstract algebra"
+	\item Asymetrical PKCS, chapter 8: "RSA public key encryption"
+\end{itemize}
+
+We recall the classic notation: $\mathbb{Z} = \{ ...,\;-2,\;-1,\;0,\;1,\;2,\;...\}$,
+ for this document all the computation will take place in the following 'set':
+If $n$ is a positive integer:
+\begin{center}
+$\mathbb{Z}/{n \mathbb{Z}} = \{0,\;,...,\;n-1\}$
+\end{center} 
+where classical addition, subtraction, and multiplication are defined just like in $\mathbb{Z}$
+with the amendment that results must be in the set $\mathbb{Z}/{n \mathbb{Z}}$.
+\subsection{Modular arithmetic} 
+
+\vspace{4mm}
+\begin{mydef}
+$x \in \mathbb{Z}/{n \mathbb{Z}}$ is said to be invertible in the ring 
+$\mathbb{Z}/{n \mathbb{Z}}$\\
+if there exist $y \in \mathbb{Z}/{n \mathbb{Z}}$
+such that $x*y=1$ in $\mathbb{Z}/{n \mathbb{Z}}$ 
+\end{mydef}
+
+
+Notation:\\
+the set of invertible of $\mathbb{Z}/{n \mathbb{Z}}$ is noted $ ( \mathbb{Z}/{n \mathbb{Z}} ) ^\times$\\
+the number of invertible of $\mathbb{Z}/{n \mathbb{Z}}$ is noted $\phi(n)$
+
+\begin{mydef}
+	A prime number is a natural number that has exactly two distinct natural number divisors: 1 and itself.
+\end{mydef}
+\begin{mydef}
+	Two integers a and b are said to be co-prime if they have no common positive factor other than 1.
+\end{mydef}
+\begin{mythm}
+	If $ n = p*q $ where $p$ and $q$ are prime numbers,\\
+	Then $\phi(n) = (p-1)(q-1)$
+\end{mythm}
+\begin{mythm}{Euler's theorem}\\
+	\label{Euler's theorem}
+	If $x \in \mathbb{Z}/{n \mathbb{Z}}$ with $x$ co-primewith $n$,
+	then $x^{\phi(n)}=1$ in the set $\mathbb{Z}/{n \mathbb{Z}}$
+\end{mythm}
+
+
+RSA stands for Ronald Rivest, Adi Shamir et Leonard Adleman who first publicly described it in 1976, but it might be true that it was known before by some governmental agencies.
+\subsection*{Keys generation}
+\begin{itemize}
+\item Choose two distinct, 'same size' big prime numbers $p$ and $q$.
+\item Compute $n = pq$. It define the set $\mathbb{Z}/{n \mathbb{Z}}$ where all the computation will take place.
+\item Compute $ \phi(n)= (p-1)(q-1)$ it must be kept secret. 
+\item Compute $\lambda(n) = lcm(p-1, q-1)$. 
+\item Choose an integer $e$ such that $1 < e < \lambda(n)$ and $gcd(e, \lambda(n)) = 1$; i.e., $e$ and $\lambda(n)$ are co-prime.
+	\footnote{here $\lambda$ is  function, many description ignore this part as most of the time Euler's function will provide the same result ... but not always, see
+		\href{https://en.wikipedia.org/wiki/Carmichael_function}{Carmichael's totient}}. Note that implies $\forall x \in \mathbb{Z}/{n \mathbb{Z}} \quad x^{e \times d} =1 $, then $(n, e)$ is released as the public key exponent.
+\item Compute $d$ the modular multiplicative inverse of $e$ in $\mathbb{Z}/{\phi(n) \mathbb{Z}}$.
+This is often computed using the extended Euclidean algorithm.
+$d$ is kept secret this is the private key of the crytposystem.
+\end{itemize}
+$(n,e)$ is the published private key\\
+$(n,d)$ is the private key: it suffice to recover any original message, however
+\begin{center}
+	$d,\lambda(n),\phi(n),p,q$ must be kept secret as any of these value is enough to find $d$	
+\end{center}
+
+
+\subsection*{Encryption/Decryption}
+	Alice transmits publishes her public key $(n,e)$ and keeps the private key secret.\\
+	Bob then wishes to send message $M$ to Alice.
+	He first turns $M$ into an integer $0 < m < n$ by using an agreed-upon reversible 
+	protocol known as a padding scheme.	He then computes the cipher-text $c$ corresponding to:
+	\begin{center}
+		$c = m^e$ mod $n$\\
+	\end{center}
+	Alice can recover $ m$ from $c$ by using her private key exponent d by the following computation:
+	\begin{center}
+		$m = c^d$ mod $n$
+	\end{center}
+	Given $m$, she can recover the original message $M$ by reversing the padding scheme.
+	
+	\paragraph*{Sign/verify} Alice wants to transmit a unencrypted message $m$ 
+	and to sign too, then she concatenates her 	message with the same message 
+	encrypt with her private-key then everyone can verify encrypting the signature
+	that was with the message to which it is concatenate.
+
+	\paragraph*{Cypher/Sign} 
+	Depending on which exponent is used to do the operation on a public data, this algorithm can either sign a data and everyone can verify it or allow everyone to cypher a data to the private key's recipient.
+
+\subsection*{RSA example}\mbox{}\\
+Key generation: \vspace{-5mm}
+	\begin{itemize}
+		\item we choose $p = 61$ and $q = 53 $.
+		\item $n= p*q=  3233$ is computed.
+		\item $\phi(n)= \phi(p*q)=\phi(p)*\phi(q)=(p-1)*(q-1)=  3120$
+		\item Choosing a number for $e$ leaves you with a single check: 
+		that $e$ is not a divisor of $3120$. $e = 17$.\\
+		\item Compute $d$ such that it is the modular multiplicative inverse of $e$ modulo $\phi(n)$: 
+		$d = 2753$\\
+		since $17 * 2753 = 46801$ and $46801$ mod $3120 = 1$, this is the correct answer.
+	\end{itemize}
+	\begin{center}
+		The public key is $(n = 3233, e = 17)$.\\
+		The private key is $(n = 3233, d = 2753)$. \\	
+	\end{center}
+Encryption/decryption: \vspace{-5mm}
+	\begin{itemize}
+		\item Encryption: let's assume that $m = 65$,\\
+		$c = m^e$ mod $n = 65^{17}$ mod $3233 = 2790$
+		\item Decryption: we have received $c = 2790$,\\
+		$m = c^d$ mod $n = 2790^{3120}$ mod $3233 = 65$
+	\end{itemize}
+
+
+\subsection*{RSA example CRT version}
+ 	As $n=pq$ exponentiations mod $p$ and mod $q$ will always be faster than exponentiation mod $n$,
+ 	moreover a link (an isomorphism!) exists between  $\mathbb{Z}/{p \mathbb{Z}} \times  \mathbb{Z}/{q \mathbb{Z}}$ and  $\mathbb{Z}/{n \mathbb{Z}}$
+ 	via the Chinese remainder theorem -CRT-. Hereafter is an example\\
+ 	We already have chosen $p=61$, $q=53$, $e=17$, $d=2753$\\
+Encryption: starting from $m=65$ \vspace{-5mm}
+	\begin{itemize}
+		\item $m_p= m \mod p=4$
+		\item $m_q= m \mod q=12$
+		\item $\phi(p)=p-1=60$
+		\item $\phi(q)=q-1=52$
+		\item $e_p= d \mod \phi(p)=17$
+		\item $e_q= d \mod \phi(q)=17$
+		\item $s_p={m_p}^{e_p} \mod p=45$
+		\item $s_q={m_q}^{e_q} \mod q=34$
+		\item $p_{-1}= p^{-1} \mod q=38$
+		\item $q_{-1}= q^{-1} \mod p=20$
+		\item $s=s_p*q*q_{-1} + s_q*p*p_{-1} \mod n=2790$
+	\end{itemize}
+Decryption: starting from $s=2790$ \vspace{-5mm}
+	\begin{itemize}
+		\item $s_p= s \mod p=45$
+		\item $s_q= s \mod q=34$
+		\item $\phi(p)=p-1=60$
+		\item $\phi(q)=q-1=52$
+		\item $d_p= d \mod \phi(p)=53$
+		\item $d_q= d \mod \phi(q)=49$
+		\item $m_p={s_p}^{d_p} \mod p=4$
+		\item $m_q={s_q}^{d_q} \mod q=12$
+		\item $p_{-1}= p^{-1} \mod q=38$
+		\item $q_{-1}= q^{-1} \mod p=20$
+		\item $m=m_p*q*q_{-1} + m_q*p*p_{-1} \mod n=65$
+	\end{itemize}
+
+\paragraph*{Remark on CRT implementation} 
+	Obviously there are more computations involved in CRT version, but they are much faster.
+
+	The computation involving the more resources is exponentiation with the CRT version the speed-up is a time 4.
+
+	Additionally many operation can be precomputed once and for all like
+	$e_p,e_q,p_{-1},q_{-1}$ and stored to be reused each time
+
+	Finally the last formula Gauss's recombination is not used in practice.
+
+	In the end CRT is a best practice, because of the speed up.
+
+\subsection*{Correctness}\
+	We have to prove that $ (m^e)^d $ mod $ n =m $: \\
+	first let's remark that the definition of $d$ implies that 
+	$ed=1+k \phi(n)$ where $k$ is an integer.\\
+	$ (m^e)^d $ mod $n = m^{e \times d} \, \mod  n $\\
+	$ (m^e)^d $ mod $ n = m^{1+k \phi(n)} \mod n $\\
+	$ (m^e)^d $ mod $ n = m \times m^({\phi(n)})^k \mod n $\\
+	Assuming that $m$ is co-prime to $n$ we can applies Euler's theorem and:
+	$ (m^e)^d $ mod $ n = m 1^k \mod n $\\
+	$ (m^e)^d $ mod $ n = m   \mod  n $ 
+	
+	Please note that if $m$ is not relatively prime to $n$, Euler's theorem can not be applied and further considerations are mandatory.
+
+\newpage
+\subsection{Cryptographic problems}
+
+Asymmetrical cryptography rely on Complexity Theory which is a branch
+of the theory of computation in theoretical computer science and mathematics 
+that focuses on classifying computational problems according to their inherent 
+difficulty, and relating those classes to each other.
+
+What interests cryptographer very asymmetrical problems : problems very easy to
+do in a way but extremely difficult to do in the other way.
+
+A typical example of asymmetrical problem is the factorization: 
+given two numbers it is very easy to compute their product 
+but, asymptotically, it is extremely difficult to factorize a product. 
+This in this precise problem with two primes factor that relies the security of RSA.\\ 
+\textit{Definition:}
+\begin{itemize}
+\item Let $n$ product of two prime numbers $p$ and $q$ what is called the factorisation problem is:
+knowing $n$ find $p$ and $q$ such that $n = pq$.
+\item To break RSA means if  $(n,e)$ be a RSA public key to find the private key: 
+$d$ such that $e d = 1$ mod $\phi(n)$.
+\end{itemize}
+Propositions:
+
+%Knowing $\phi(n)$ is equivalent to know the factorisation of $n$.\\
+Knowing a RSA public key and a RSA private key then we can know the factorization of $n$. 
+And we saw that thanks to the extended Euclidean algorithm if we know a factorization of $n$ 
+it is easy to find the private key.
+\begin{center}
+\textbf{So, breaking RSA is equivalent to solve the factorization problem.}
+\end{center}
+
+
+
+\paragraph*{The RSA problem}
+
+Definition:
+
+Let $(n,e)$ be a RSA public key what is called the RSA problem is :
+\begin{center}
+\textbf{knowing $c$ co-prime to $n$, to find $m$ such that $c = m^e$ mod $n$.}
+\end{center}
+It means to be able to find one plain-text from it's cypher-text, 
+without finding the private key.
+
+The following assertion is not proven yet:\\
+If someone can resolve the RSA problem many times then he break RSA. 
+And then maybe that the RSA problem is easier than the factorization problem.
+
+

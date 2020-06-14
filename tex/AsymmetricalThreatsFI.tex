@@ -1,0 +1,64 @@
+\newpage
+\subsubsection{Physical threat: fault injection}
+
+THE reference: 
+\cite{book-2012-joye}, published in 2012, countains more than 400 bibliographical references
+
+
+Due to the mathematical complexity of some laser attack, 
+which a complete description would force me to do a lot of 'recall' 
+about abstract maths and would dramatically increase the size of 
+this document, the goal for this part are:
+\begin{center}
+1 - list the known papers, sum-up practical content.\\
+2 - evaluate their efficiency in term of bit(s) per fault.\\
+3 - evaluate their feasibility in term of countermeasures.\\
+\end{center}
+
+Two remarks, as stupids than fundamental:
+\begin{center}
+	All attacks by fault injection, assume a \textit{fault model}.\\
+	\textbf{
+	The more unprecise the model is the more realistic the attack.\\
+	Many of the fault model are 'impossible' to check.
+}
+\end{center}
+
+\subsection*{FI targetting straightforward RSA:}
+\begin{itemize}
+\input{tex/FaultinjectionBoneh.tex}
+\input{tex/FaultinjectionBao.tex}
+\input{tex/FaultinjectionJoye.tex}
+\input{tex/FaultinjectionYen.tex}
+\input{tex/FaultinjectionSchmidt.tex}
+\input{tex/FaultinjectionBoreale.tex}
+\end{itemize}
+
+\subsection*{FI targetting CRT-optimized RSA:}
+\begin{itemize}
+\item Coron - \cite{ches-2009-coron}
+
+\underline{Type of attack:}\\
+reproducible input\\
+partially known plain-text \\
+RtoL exponentiation algorithm only\\
+\underline{Result:}\\
+CRT: one faulty encryption is enough\\
+non CRT: several faulty encryption are required.\\
+\underline{Fault localisation}:\\
+CRT:\\
+non CRT: one of the two CRT exponentiation\\
+\underline{Relying on}:\\
+Recent improvement of Coppersmith's algorithm to find small 
+roots of multivariate polynomial.
+
+
+\item Amhuller - Fault attack on CRT-RSA concrete 
+result and practical approach - 2007
+\item Coron - Fault Attacks and Countermeasures on 
+Vigilants RSA-CRT Algorithm - 2010
+\item Naccache - Modulus fault attack aginst RSA-CRT Signatures - CHES2011
+\item Fouque - Attacking RSA-CRT signatures with fault 
+Montgommery Multiplication - CHES2012
+\end{itemize}
+Electro magnetic fault injection are the most powerful... wtf

@@ -1,0 +1,82 @@
+\subsection*{Matrix}
+
+
+
+
+Hereafter are listed and summed up the pre-cited articles.
+The symbol $\bullet$ means that the attack described in the corresponding article is defeating the 
+described implementation,the symbol $\circ$ means that the article give  a partial description that 
+could weakened the described implementation under certain assumption(s), finally the symbol $\rip$ 
+means that the corresponding counter measure is defeating the attack presented in the article.
+Note also that the indication describing each implementations are very partial.\\
+
+For Elliptic Curve Cryptography...
+\begin{center}
+\begin{savenotes}
+\begin{tabular}{p{.5cm}p{.5cm}p{.5cm}p{.5cm}p{.5cm}p{.5cm}p{.5cm}p{.5cm}p{.5cm}p{.5cm}p{.5cm}p{.5cm}p{1.5cm}}
+           \rotatebox{70}{ECC} 
+    	 & \rotatebox{70}{ECDSA } 		
+    	 & \rotatebox{70}{Double \textit{\&} Add }  
+    	 & \rotatebox{70}{Double \textit{\&} Add Always }  
+    	 & \rotatebox{70}{Atomic Double \textit{\&} Add } 
+    	 & \rotatebox{70}{$2^k$-arry method }
+    	 & \rotatebox{70}{Slidding Window }
+       	 & \rotatebox{70}{Montgommery's Ladder } 
+       	 & \rotatebox{70}{Masked Montgommery's Ladder
+\footnote{2006' Fumaroli\textit{\&al.} "Blinded fault resistant exponentiation"}  }        	  
+    	 & \rotatebox{70}{Point Blinding}     	 
+    	 & \rotatebox{70}{Scalar Blinding}    	 
+    	 & \rotatebox{70}{Coordinates randomization} 
+    	 & References\\    	 
+\end{tabular}\\
+\end{savenotes}
+\begin{tabular}{|p{.5cm}|p{.5cm}|p{.5cm}|p{.5cm}|p{.5cm}|p{.5cm}|p{.5cm}|p{.5cm}|p{.5cm}|p{.5cm}|p{.5cm}|p{.5cm}|p{1.5cm}|}   	
+	
+	\hline & $\bullet$ & & & & & $\bullet$ & & & $\circ$ & $\circ$ & $\rip$ & 
+\cite{Medwed - Template attack on ECDSA - 2008}\\
+
+	\hline & & & & & & & & $\bullet$ & & & & 
+\cite{Herbst - Using templates to attack masked Montgomery ladder implementations of modular exponentiation - 2008}\\
+
+	\hline & & & & $\bullet$ & & & &  & & & & 	
+\cite{Hanley - Using templates to distinguish multiplications from squaring operations - 2011}\\
+	
+	\hline & & & $\bullet$ &  & & & & & & $\bullet$ & & 	
+\cite{Schindler - Exponent blinding does not always lift (partial) SPA resistance to higher-level security - 2011}\\
+
+	\hline 
+\end{tabular}\\
+\end{center}
+
+For RSA...
+\begin{center}
+\begin{tabular}{p{.5cm}p{.5cm}p{.5cm}p{.5cm}p{.5cm}p{.5cm}p{.5cm}p{.5cm}p{.5cm}p{1.5cm}} 		
+    	   \rotatebox{70}{Square \textit{\&} Multiply }  
+    	 & \rotatebox{70}{Square \textit{\&} Multiply Always }  
+    	 & \rotatebox{70}{Atomic Square \textit{\&} Multiply } 
+    	 & \rotatebox{70}{$2^k$-arry method }
+    	 & \rotatebox{70}{Slidding Window }
+       	 & \rotatebox{70}{Montgommery's Ladder }  
+       	 & \rotatebox{70}{Masked Montgommery's Ladder
+\footnote{2006' Fumaroli\textit{\&al.} "Blinded fault resistant exponentiation"}  }  
+    	 & \rotatebox{70}{Message Blinding}     	 
+    	 & \rotatebox{70}{Exponent Blinding}    	 
+    	 & References\\    	 
+\end{tabular}\\
+\begin{tabular}{|p{.5cm}|p{.5cm}|p{.5cm}|p{.5cm}|p{.5cm}|p{.5cm}|p{.5cm}|p{.5cm}|p{.5cm}|p{1.5cm}|}   	
+	\hline & & & & & & $\bullet$ & & & 
+\cite{Herbst - Using templates to attack masked Montgomery ladder implementations of modular exponentiation - 2008} \\	
+
+	\hline & & $\bullet$ & & & & & & & 
+\cite{Hanley - Using templates to distinguish multiplications from squaring operations - 2011}\\
+
+	\hline & $\bullet$ & & & & & & & $\bullet$ & 
+\cite{Schindler - Exponent blinding does not always lift (partial) SPA resistance to higher-level security - 2011}\\
+
+	\hline 
+\end{tabular}\\
+\end{center}
+
+
+
+

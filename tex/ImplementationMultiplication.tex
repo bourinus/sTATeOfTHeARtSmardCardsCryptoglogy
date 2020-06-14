@@ -1,0 +1,151 @@
+\subsection{Multiplications}
+\label{RSA_multipliction}
+
+Beware that this is en attempt to separate each type operation -addition/soustration; multiplication; reduction; exponnetiation- whereas modern algorithm interleaves this operations ....
+
+AIM: realize the following operation: compute $x \times y$ in the group $G$,
+where $G$ is a general group. In some groups special algorithm can speed up 
+multiplication algorithm, thanks to their rich algebraic structure and property:
+this is the case of 'some' finite fields with Froebinius's isomorphism. 
+
+\begin{itemize}
+	\item  
+		\begin{tabular*}{\linewidth}{ p{16cm} p{1.5cm}}
+			Recursive method -\textit{Neanderthal}-  & $ -\infty $  \\
+		\end{tabular*}	
+			\noindent
+			Multiply two numbers thanks to the definition of the multiplication 
+			relying on the one of the addition.\\
+			Complexity: $\bigO{n\times2^n}$.
+	\item  	
+		\begin{tabularx}{0.9\linewidth}{ p{16cm} p{1.5cm}}
+			Knuth's schoolbook method -\textit{Neanderthal adult}-  & $0\%$ \\
+		\end{tabularx}	
+			\noindent
+			This is the old method that is learnt in elementary school, also know as the Shift-And-Add method.
+			Note that the famous Andrei Kolmogorov stated that this method was optimal! \\
+			Complexity:  $\bigO{n^2}$.		
+
+	\item 
+		\begin{tabularx}{0.9\linewidth}{ p{16cm} p{1.5cm}}
+			Gauss trick -\textit{1852}-  & $0\%$ 
+		\end{tabularx}	
+
+	\item  	\begin{tabularx}{\linewidth}{ p{16cm} p{1.5cm}}
+			Quarter square method -\textit{Babylonian, 2000 BC}-  & $0\%$ \\ 
+			\end{tabularx}	
+			This method suppress multiplication for squarring, and is applcable since
+			division by $4$ is allowed and $p$ is even.
+			\noindent
+			\begin{center}
+			$			  \frac{(x+y)^2}{4} -  \frac{(x-y)^2}{4} =   \frac{1}{4}[(x^2+2xy+y^2)-(x^2-2xy+y^2)]= xy $
+			\end{center}
+			Or taking advantage of the parity:
+			\begin{center}
+			$			\lfloor  \frac{(x+y)^2}{4} \rfloor - \lfloor \frac{(x-y)^2}{4} \rfloor = xy $
+			\end{center}
+
+	\item  	\begin{tabularx}{\linewidth}{ p{16cm} p{1.5cm}}
+			Revisited quarter square method -\textit{F.J.Taylor, 1981}-  & $0\%$ \\ 
+			% https://tel.archives-ouvertes.fr/tel-00112121/document
+			\end{tabularx}
+			Quarter square method adapted to modular multiplication.\\	
+			Method bounded to the same restrictions than the previous one.\\
+			Taylor pre-computes: $\forall \hspace{1mm} 0 \leq x < p, MEM(x) = 4^{-1} x^{2}\mod p$\\
+			The output is directly reduced $\mod p$, \textit{i.e.} no reduction and no mulitplication.\\
+			But  $\#MEM  = p n$ bits.
+
+	\item  	\begin{tabularx}{\linewidth}{ p{16cm} p{1.5cm}}
+			Booth's algorithm-\textit{1951}-  & $20\%$ \\ 
+			\end{tabularx}	
+			\noindent
+			This is a multiplication algorithm that multiplies two signed binary numbers in two's
+			complement notation, used in the Infineon's ZDN algorithm. This multiplication algorithm is based 
+			on a changed of the representation of numbers in two's complement notation.
+
+	\item  	\begin{tabularx}{\linewidth}{ p{16cm} p{1.5cm}}
+			Karatsuba's Method -\textit{1962}-  & $0\%$  
+			\end{tabularx}	
+			\noindent
+			Divide and conquer applied to the classical multiplication algorithm: 
+			numbers to multiply are divided in two equal parts, then using Gauss's 
+			trick the result is obtained with only three multiplication (instead of four).\\
+			Note that the week after Kolmogorof state that any algorithm would not be faster than $n^2$,
+			one of his student, Anatolii Alexeevich Karatsuba, proved him he was wrong with this algorithm.\\
+			Complexity:  $\bigO{3n^{log_2(3)}} \approx \bigO{3n^{1.55}}.$
+
+			
+	\item  	\begin{tabularx}{\linewidth}{ p{16cm} p{1.5cm}}
+			Toom-Cook Algorithm -\textit{1963}-  & $- \infty$  
+			\end{tabularx}	
+			\noindent
+			Generalise the previous method dividing each number to be multiplied in k 
+			parts and it is typically used for intermediate-size multiplications, before using the 						asymptotically faster Schonhage Strassen algorithm. Not applicable to smart card.\\
+			Complexity: $\bigO{n^{log(5)/log(3)}} \approx \bigO{n^{1.465}}  $
+
+	\item  	\begin{tabularx}{\linewidth}{ p{16cm} p{1.5cm}}
+			Schonhage-Strassen algorithm -\textit{1971}-  & $ -\infty $
+			\end{tabularx}	
+			\noindent
+			Computation by isomorphism using FFT in rings with $2^n+1$, it is used in practice
+			for numbers with more than 10,000 to 40,000 decimal digits. Not applicable to smart card.\\
+			Complexity: $\bigO{nlog(n)log(log(n))}$. warning
+
+	\item  	\begin{tabularx}{\linewidth}{ p{16cm} p{1.5cm}}
+			Kochanski multiplication's -\textit{Kochanski 1985}-  & $20\%$ 
+			\end{tabularx}	
+			\noindent
+			Kochanski multiplication is an algorithm that allows modular arithmetic (multiplication or 
+			operations based on it, such as exponentiation) to be performed efficiently when the modulus 
+			is large (typically several hundred bits). Widely used in constrained environment.
+			
+			
+%	\item  	\begin{tabularx}{\linewidth}{ p{16cm} p{1.5cm}}
+%			Reduced by feedback -\textit{Veilhaber 1987}-  & $00\%$ \\ 
+%			\end{tabularx}	
+%			\noindent
+%			Algorithm discoverd (and forget) many times during the last 30 year
+
+	\item  	\begin{tabularx}{\linewidth}{ p{16cm} p{1.5cm}}
+			Furer's algorithm -\textit{2007}-  & $ -\infty $  
+			\end{tabularx}	
+			\noindent
+			Improvement of the Schonhage-Strassen's algorithm.\\
+			Complexity:  $\bigO{nlog(n)2^{ log^{*}(n)} }$ where $ log^{*} $ is the iterated logarithm.
+			Not applicable to smart card.
+
+	\item  	\begin{tabularx}{\linewidth}{ p{16cm} p{1.5cm}}
+			Hardware multiplier -\textit{2000's}-  & $100\%$  
+			\end{tabularx}	
+			\noindent
+			Especially dedicated multiplier, with a high efficiency.	
+			According to a highly valuable source, namely wikipedia, hardware multiplier are,
+			in general multiplying by $n$, using  the operation deduced from the following
+			representation:
+			\begin{itemize}
+				\item Canonical binary representation
+				\item Booth encoding
+			\end{itemize}		
+			But bit are not automatically scan 1 by 1.	
+					
+
+	\item  	\begin{tabularx}{\linewidth}{ p{16cm} p{1.5cm}}
+			Masked Multiplication -\textit{2000's}-  & $100\%$  
+			\end{tabularx}
+			This is a generic counter-measure, to hide usage of multiplicands.
+			\begin{center}	
+			$p \times q  = (p-x) \times (q-x) + x \times (p+q) -x^2$
+			\end{center}
+			\noindent
+			Simple method to blind operands
+
+	\item 'As fast as you want'
+	Nota, there exist a theoreme stating:\\
+	Given $\epsilon>0$ there exists a multiplication algorithm such that the number 		
+	of elementary operation $T(n)$ needed to multiply two m-bit digit numbers satisfies:
+	\begin{center}
+	$T(n) < c(\epsilon) \times n^{1+\epsilon} $
+	\end{center}
+	
+
+\end{itemize}

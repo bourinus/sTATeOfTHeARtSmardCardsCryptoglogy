@@ -1,0 +1,56 @@
+\item Schmidt - \lokiquote{fdtc-2008-schmidt}
+
+\textbf{Paper's sum-up:}\\
+Present a FI attack breaking straightforward RSA skipping squarrings.
+Applicable to most the exponentiation algorithm. 
+
+
+\textbf{Summing up \textit{Attack}} LtoR S\&M
+
+\underline{Fault model:}
+be able to skipp a determined squaring.
+
+\underline{Targetted:}
+RtoL \& LtoR: S\&M, S\&MA, $2^k$-arry method, sliding window.
+
+\underline{Type of attack:}
+random known plaintext attack $\&$ reproducible input attack, 
+correct signature mandatory. 
+
+\underline{Counter measures}
+Ineffective: Square \& Multiply always.
+Effective: the authors are claiming that they can overcome 
+'most of SPA countermeasure' by skipping the phase where this counter
+measure is applied. With their super fault model this trivial:
+-'each time that I want to skipp an operation it works'-. 
+Practically, 'most of SPA countermeasure' defeats this attack.
+
+Initialization:\\
+get $Sig_0$ -skip the last squaring- and the correspondent non faulted signature.\\
+Then, if the last square has been genuinely skipped, we shall have:
+\begin{center}
+$
+Sig = \left\{
+    \begin{array}{ll}
+        {Sig_0}^2 \mod n & \textsf{ for } e_0=0 \\
+        {Sig_0}^2 \times m^{-1}  \mod n & \textsf{ for } e_0=1 \\
+    \end{array}
+\right.
+$
+\end{center}
+Do this operation till the previous equation has been verified and then $e_0$ deduced.
+
+Induction:\\
+Then when all the first $k-1$ bit of the exponent has been obtained, 
+if the right square has been genuinely skipped, we shall have:
+\begin{center}
+$
+Sig_k = \left\{
+    \begin{array}{ll}
+        {Sig_{k-1}} \mod n & \textsf{ for } e_{k-1}=0 \\
+        {Sig_{k-1}} \times m^{2^{k-1}}  \mod n & \textsf{ for } e_{k-1}=1 \\
+    \end{array}
+\right.
+$
+\end{center}
+

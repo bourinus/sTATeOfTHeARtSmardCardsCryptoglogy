@@ -1,0 +1,87 @@
+\newpage
+\subsubsection{Atomic Square \& Multiply}
+\begin{itemize}
+\item  	
+		\begin{tabularx}{\linewidth}{ p{16cm} p{1.5cm}}
+		Atomic Square \& Multiply - \lokiquote{ieeetc-2004-joye}
+		\textit{Joye 2003}-  & $0\%$ 
+		\end{tabularx}	
+			\noindent
+
+			\vspace{2mm}
+			\textit{Generic counter measure} principle, based on the concept of 
+			'side channel indistinguishability', applicable 
+			to virtually all algorithms to protect them for SPA. 			
+		
+			Here is presented the version to protect the Square \& Multiply 
+			algorithm against the SPA. Carefully note that $k$ is simply a boolean.			
+			
+			\begin{algorithm}[h]
+				\KwIn{$x,n \in \mathbb{N}$, $x \leq n$, ${d =  d_{t-1} d_1 d_0}_2$}
+				\KwOut{ $ y   =  x^d \mod n$ }
+				$R_0 \leftarrow	 T.N^{'} \mod R$ 
+				$R_1 \leftarrow	 T.N^{'} \mod R$ \;	
+				$i \leftarrow t-1$
+				$k \leftarrow 0$	\;	
+				\While{$ i \geq 0$ }
+				{			 
+					 $R_0 \leftarrow R_0 \times R_k $ \;
+					 $k \leftarrow k \oplus d_i $  \;
+					 $i \leftarrow i - \textlnot k $  	
+				}									 
+				\Return{$ y $}\;
+				\caption{Atomic Square \& Multiply - LtoR version}
+			\end{algorithm}					
+			\vspace{5mm}
+									
+   		\underline{Example:} 
+   			LtoR version - Atomic Square \& Multiply:   			
+   			$n=23_{10}=10111_2$\\
+			\begin{tabularx}{\linewidth}{ p{2cm} p{11cm} p{3cm}}
+				$R_0=1$ & $R_1=x$        	& $(k=0\;\;i=4)$\\
+				$R_0=1$ & 		     	    & $(k=1\;\;i=4)$\\
+				$R_0=x$ & 		     	    & $(k=0\;\;i=3)$\\
+				$R_0=x^2$ & 		     	& $(k=0\;\;i=2)$\\
+				$R_0=x^4$ & 		     	& $(k=1\;\;i=2)$\\
+				$R_0=x^5$ & 		     	& $(k=0\;\;i=1)$\\
+				$R_0=x^{10}$ & 		     	& $(k=1\;\;i=1)$\\
+				$R_0=x^{11}$ & 		     	& $(k=0\;\;i=0)$\\
+				$R_0=x^{22}$ & 		     	& $(k=1\;\;i=0)$\\
+				$R_0=x^{23}$ & 		     	& $(k=0\;\;i=-1)$
+			\end{tabularx}	
+			
+			\textbf{Remark that the same power of $x$ than in Square \& Multiply - LtoR version}
+			\begin{center}
+			$x$ $x^2$ $x^4$ $x^5$ $x^{10}$ $x^{11}$ $x^{22}$ $x^{23}$
+			\end{center}
+
+
+			So this algorithm is: using the same addition chain that Square \& Multiply to get 
+			the final result as a LtoR S\&M, but in much more side-channel resistant way: 
+			\begin{itemize}
+				\item no condition: it is doing exactly the same thing at each recursion
+				\item no squaring vs multiplication discrimination can be achieve from an 
+				algorithmic point of view. 			
+			\end{itemize}
+            The price is no special routine is used to square, automatically slowing down the whole process 
+            		
+				
+		\textit{Disambiguation}\\
+			Because of the absence of squaring it is then frequently called
+			'multiply always'  algorithm, please notice that is is ambiguous indeed, 
+			see page \pageref{Square_Multiply_Always}.
+
+		\textit{Conventional Names}\\
+			"Joye's multiply always, LtoR version",  
+			"Atomic Square \& Multiply, LtoR version"
+
+		\textbf{Known Vulnerability}\\
+		It have to be understood that this implementation is, by definition, absolutely 
+		invulnerable to squaring vs multiplication discrimination 	
+		\textbf{from an algorithmic point of view}.
+
+		But it does not mean that it is invulnerable to squaring vs multiplication discrimination.
+Indeed squaring vs multiplication discrimination can be achieved focusing on the hamming weight.
+
+			
+\end{itemize}					

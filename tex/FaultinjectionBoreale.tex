@@ -1,0 +1,91 @@
+\item Boreale - \lokiquote{fdtc-2006-boreale}
+
+\textbf{Paper's sum-up:}\\
+Present a FI attacks breaking straightforward RSA in RtoL version using the Jacobi Symbol, using
+a practical fault model: that external perturbation, or glitch, may cause a single modular 
+multiplication to produce a truly random result. Two attacks are presented, the second one having relaxed condition.
+
+\underline{Type of attack:}
+known $\&$ reproducible plaintext attack .
+
+\underline{Targetted:} RtoL $S\&M$ only.
+
+\underline{Counter measures:}\\
+Unefficient: Blind masking of the message: $m$ replaced by $r^e \times m \mod N$.\\
+Efficient: verify the signature by checking that $S^e = m \mod N$, exponnent masking,
+various delays, modulus blinding-?-.
+
+\underline{Fault model:}
+Practical: change the result of a certain multiplication for a random one.
+
+\underline{Mathematical background:}
+Jacobi symbol generalizes Legendre's ones, which value 
+$\left( \frac{a}{p} \right)$, for $p$ prime, means:
+\begin{center}
+$
+\left( \frac{a}{p} \right) = \left\{
+    \begin{array}{ll}
+      \;\; 1 & \textsf{if} \;\;\exists \; x \neq 0 \in \mathbb{Z}/{p\mathbb{Z}}  / a = x^2 \mod p\\
+      -1     & \textsf{if} \not{\exists} \; x \neq 0 \in \mathbb{Z}/{p\mathbb{Z}}  / a = x^2 \mod p\\
+       \;\;0 & \textsf{if} \;\;a = 0 \mod p\\
+    \end{array}
+\right.
+$
+\end{center}
+
+
+\href{http://en.wikipedia.org/wiki/Jacobi_symbol}{ A link: Wiki about Jacobi \& legendre symbols: }
+
+\textbf{Summing up \textit{Attack}} LtoR $S\&M$
+		
+Assumptions:\\
+1- Each modular multiplication/squaring operation takes a constant time, 
+say $\delta$ clock cycles, and $\delta$ is a constant known to the attacker.\\
+2- Time taken by control-flow instructions is ignored, we view the
+algorithm as a sequence of modular multiplications. 
+Each phase $i$ takes either $\delta$ or $2\delta$.\\
+3- A glitch applied onto the device during the execution of a modular multiplication
+will result in a random value $r\in \mathbb{Z}/{2^s\mathbb{Z}}$ to be written in 
+the involved register in place of the multiplication's correct result.\\
+4- For message m it is assumed that $\left( \frac{m}{N} \right)=1$, 
+if equal to $-1$ some equation shall be slighlty modified, the case where 
+$\left( \frac{m}{N} \right)=0$ in unlikely : it implies $m=p  \textsf{ or } q$
+
+The authors begin to define $T_i$ the moment when happend the $i^{th}$ operation 
+while an encryption is performed. As the attacker already knows $d_0$ 
+the first fault is done around  $t=T_1$, more precisely, $T_1 > t > T_1 -\delta$,
+this will provok a fault in the squarring of the phase $i-1$.
+
+The obtained signature can be written the following way, using the classical notation 
+$c_i = m^{2^i} \mod n$
+\begin{center}
+$
+S^{'} = 
+c_0^{d_0}   c_1^{d_1}     \; \hdots \;         c_{i-1}^{d_{i-1}}
+(r)^{d_i} (r^2)^{d_{i+1}} \; \hdots \; (r^{2^{l-i-1}})^{d_{l-1}}
+ \mod n
+$
+\end{center}
+Taking in account hypothesis 4, then it is clear that, except $ (r)^{d_i} $, 
+each divisor of $S^{'}$ has Jacobi Symbol different from -1.
+Therefore $\left( \frac{S^{'}}{N} \right)= -1$ implies
+$\left( \frac{r^{d_i}}{N} \right)= -1$ and then $d_i = 1$. 
+On the other hand to obtain $\left( \frac{S^{'}}{N} \right) \neq -1$ 
+suggest that the more probable is that $d_i =0$. 
+
+Authors finishes this part with an evaluation of the
+probability $\{ d_i=1 \| \left( \frac{S^{'}}{N} \right) \neq -1 \}$.
+
+If the moment of the $i^{th}$ operation is difficult to estimate,
+the attack is run severasl time $ \approx 50$.
+
+\underline{Software simulation:}\\
+On a 768-RSA, 5000 faults are enough to recover, in 30 minutes,
+the whole key in 70\% of the cases.
+
+
+
+
+
+	
+	

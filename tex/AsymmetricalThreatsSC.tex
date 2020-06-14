@@ -1,0 +1,263 @@
+\subsubsection{Physical threat: side channel}
+
+
+$M/M^2$ attack
+zero attacks (not working with CRT)
+doubling attack
+novack attack
+Note: There is no logic in the order in which the different attacks are listed !
+
+
+Most of the time in smart card evaluation only known plain-text attack can be performed
+
+
+
+. DPA Attack on RSA private key:
+Can be found in paper named:
+                  	   	                		           "A DPA attack on RSA in CRT mode
+Authors: 		
+					                                    Witteman, Van Woudenberg, Menarini
+Employer:           
+                                     		                                                                        Riscure
+Date of Publication:
+
+Key words:       									        Iterative attack
+
+
+----------------------------------------
+
+
+
+. Zero-Exponent-Multiple-Data DPA:  (ZEMD-DPA)
+Can be found in paper named:
+		                              'Power analysis attacks of modular exponentiation in smartcards."
+Authors: 
+	                                                          		          	              Messerges, Dabbish, Sloan
+Employer:
+					                                          Motorola Labs, University of Illinois
+Date of Publication: 
+							       		                                     1999
+Type of attack:
+                                                      Recursive attack, mono-nit attack, multi-bit attack,  known plain-text
+Countermeasure:
+                                                                                                                   Square-and-Multiply-Always?
+Key words: 
+							                           ZEMD-DPA, Iterative attack 
+Idea :   	
+			            	           DPA on bit(s) of the secret key during modular exponentiation
+                                                                       	           Can not append on RSA-CRT implementation
+----------------------------------------
+
+
+
+
+
+
+
+
+
+. Zero-Exponent-Multiple-Data CPA:  (ZEMD-CPA)
+
+Can be found in paper named:
+		   "Power Analysis for Secret Recovering and Reverse Engineering of Public Key Algorithms"                          
+Authors:  
+					                Amiel, Feix, Villegas
+Employer:
+                                                                                                                      Inside contactless, Gemalto
+Date of Publication:  
+		     			                                      2007?
+Type of attack:
+                                                                 Recursive, mono-nit attack, multi-bit attack, known plain-text
+Countermeasure:
+                                                                                                                                   Exponent blinding?
+Key words:
+                                                                                                                     ZEMD-CPA, Iterative attack 
+Idea:
+                         		                        CPA on bit(s) of the secret key during modular exponentiation.
+                                                                        	              Can not append on RSA-CRT implementation
+
+----------------------------------------
+
+
+
+
+
+. CPA on Multiplicand Data during Square-and-Multiply exponentiation:
+Authors: 
+	                                	                                   		                         Amiel, Feix, Villega ?
+Employer:
+                                                                                       			 Inside contactless, Gemalto
+Date of Publication:
+       			                             						         2007?
+Countermeasure:
+                                                                                    Square-and-Multiply-Always? Exponent blinding?
+Type of attack:
+								       Non-recursive, known plain-text
+Key words:
+			             	                     Square-and-Multiply, Correlation, Multiplicands
+Idea:
+	                             During an exponentiation, for each multiplication (as opposed to squaring), 
+                                                                                                          one of the multiplicands is constant
+Remark: 
+					can append on full multiplicands or only on a part of them                          	                                                                                d is thus recovered with a single correlation 
+
+----------------------------------------
+
+
+
+. Cross Correlation attack:
+Can be found in paper named:
+ 				                          		     "Cross correlation attack on RSA"
+Authors:
+ 	                                                                           Witteman, Van Woudenberg, Menarini
+Employer:        
+                                                                                                                            Riscure
+Date of Publication:
+         2009?
+Against a counter measure:
+ Square-and-Multiply-Always 
+Countermeasure:  
+                                                                                                      			    Exponent blinding
+Key words: 	
+		                 		                         Square and multiply always, cross correlation
+Idea:                                       in mono-bit square and multiply always, considering couple of operation: 
+     SM, SMd, and MS do not share multiplicands whereas MdS does.
+
+
+----------------------------------------
+
+
+.Correlation during the initial reductions
+Authors: 
+	                                	                                                                           Amiel, Feix, Villega ??
+Employer:
+                                                                                       			 Inside contactless, Gemalto
+Date of Publication:
+       			                             						         2007?
+Countermeasure:
+                                                                                     
+Type of attack:
+								       Non-recursive, known plain-text
+Key words:
+			             	             CRT, modular reduction, Correlation, Multiplicands
+Idea:
+	                          
+
+				
+----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+. Correlation during CRT modular exponentiations:
+Authors: 
+	                                	                                                                          Amiel, Feix, Villega ??
+Employer:
+                                                                                       			 Inside contactless, Gemalto
+Date of Publication:
+       			                             						         2007?
+Countermeasure:
+                                                                                    Square-and-Multiply-Always? Exponent blinding?
+Type of attack:
+								       Non-recursive,  known plain-text
+Key words:
+			             	             CRT, Square-and-Multiply, Correlation, Multiplicands
+Idea:
+	                         do correlation on the multiplicand's value to recover simultaneously dp and dq
+Remark: 
+					can append on full multiplicands or only on a part of them                          	                                                     Applicable to Barret reduction. Not to Montgomery reduction
+
+
+
+
+
+----------------------------------------
+
+
+
+
+
+. Correlation during the CRT recombination:
+Authors: 
+	                                	                                                                          Amiel, Feix, Villega ??
+Employer:
+                                                                                       			 Inside contactless, Gemalto
+Date of Publication:
+       			                             						         2007?
+Countermeasure:
+                                                                                     
+Type of attack:
+								       Non-recursive, known plain-text
+Key words:
+			             	             CRT, Square-and-Multiply, Correlation, Multiplicands
+Idea:
+	                             During an exponentiation, for each multiplication (as opposed to squaring), 
+                                                                                                          one of the multiplicands is constant 	              
+
+                                       
+
+
+                                       
+
+----------------------------------------
+
+
+
+
+
+
+
+
+
+. The Big-Mac Attack (Big Mac) 
+Title:
+                                                   	            	                "Sliding windows succumbs to big mac attack."
+Authors: 
+	                                                          						         Walter
+Date of Publication:
+ 									                                     2001
+				            	              
+
+
+
+. CPA   
+. DPA attack with recombination of bit of p
+. Attacking Blinded RSA-CRT with Montgomery Multiplication
+. A Timing Attack against RSA with the Chinese Remainder Theorem
+. Perturbating RSA Public Keys: An Improved Attack 
+. Side Channel Attack Resistant Implementation of Multi-Power RSA using Hensel Lifting
+
+Without message blinding:
+ACPA Schindler(2000)
+CPA of tomoeda 2006
+CPA of Primas 2010
+KPA of Hlavac lattice
+ACPA of Ruppeldtova
+
+
+
+Messerges, Dabbish, Sloan's    
+Single-Exponent, Multiple-Data (SEMD) DPA Attack
+Multiple-Exponent, Single-Data (MESD) DPA Attack - weaker than ZEMD ???
+
+----------------------------------------
+
+1.6 Second order Analysis
+A refined version of the SPA analysis can be used in order to be able to synchronize two signals having
+a relationship between each other (for instance, being able to match a decision-making event about

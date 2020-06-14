@@ -1,0 +1,126 @@
+\newpage
+\subsubsection{Sliding window algorithms}
+\begin{itemize}
+\item  	
+		\begin{tabularx}{\linewidth}{ p{16cm} p{1.5cm} }
+		LtoR static $2^k$ sliding window method:  & $0\%$ 
+		\end{tabularx}	
+			\noindent
+			Adapt the previous method in minimizing the size of the window when possible.
+			First of all maximum length for the window has to be defined, then then bit are scan 
+			adapting the window size to isolate the zeros.
+			
+		\underline{Complexity}:\\
+			The algorithm requires   $\omega - 1 + n$ squares 
+			and, at most, $2^{\omega-1} - 1 +  \frac{n}{\omega}$  multiplications.
+			\vspace{3mm}
+		
+\begin{algorithm}[h]
+	\KwIn{$x,n \in \mathbb{N}$, $x \leq n$, ${d =  d_{t-1} d_1 d_0}_2$, $k$}
+	\KwOut{ $ y   =  x^d \mod n$ }
+	$x_1 \leftarrow x$	\; 
+	$x_2 \leftarrow x^2$	\;		
+	\For{ $ i = 0 \to 2^{k}$ }
+	{						     
+		$x_i = x_{2i -1} \times x_2$ \;
+	}
+	$y \leftarrow 1$	\;
+	$i \leftarrow t-1 $ \;
+	\While{$ i \geq 0 $}
+	{			 
+        \If{$d_i = 0$}{
+	   		$ y \leftarrow y^2 $\;
+			$ i \leftarrow i-1 $\;
+		} \Else {
+            $ s \leftarrow max(i-w+1,0)$ \;
+			\While{$d_s=0$}{$s \leftarrow s+1 $}
+			$ u \leftarrow \{d_i...d_s\}_2$\;
+            $ y \leftarrow y^{2^{i-s+1}} \times x_{u} $\;
+            $ i \leftarrow i-s+1 $\;
+		}
+	}				 
+	\Return{$ y $}\;
+	\caption{LtoR static $\omega$-sliding window method}
+\end{algorithm}
+
+		\underline{Example 1:} LtoR static $\omega$-sliding window method \\
+			Let's assume that 
+			$n=11651101_{10}=1011\;\;000\;\;111\;\;00\;1\;\;\;000000\;\;111\;\;0\;\;1_2$ and $\omega=4$\\
+			\begin{tabularx}{\linewidth}{ p{2cm} p{2cm} p{2cm} p{2cm} p{2cm} p{2cm} p{2cm}}
+				$y:= 1$   & 		 &          &		   &          &			 & $y:=y \times x^{11}$\\
+				$y:= y^2$ & $y:=y^2$ & $y:=y^2$ & 		   &          &			 & \\
+				$y:= y^2$ & $y:=y^2$ & $y:=y^2$ &    	   &	      &			 & $y:=y \times x^7$\\            
+				$y:= y^2$ & $y:=y^2$ &          &          &          &			 & \\
+				$y:= y^2$ &          &     		&	       &          &			 & $y:=y \times x$\\       
+				$y:= y^2$ & $y:=y^2$ & $y:=y^2$ & $y:=y^2$ & $y:=y^2$ &	$y:=y^2$ & \\
+				$y:= y^2$ & $y:=y^2$ & $y:=y^2$ &          &          &			 & $y:=y \times x^7$\\
+				$y:= y^2$ &  		 &          &          &          &			 & \\
+				$y:= y^2$ &  		 &          &          &          &			 & $y:=y \times x$	\\			
+			\end{tabularx}
+
+
+			$n=11651101_{10}=1011\;\;000\;\;111\;\;00\;1\;\;\;00000\;\;0111\;\;01_2$ and $\omega=4$\\
+			\begin{tabularx}{\linewidth}{ p{2cm} p{2cm} p{2cm} p{2cm} p{2cm} p{2cm}}
+				$y:= 1$   & 		 &          &		   &          & $y:=y \times x^{11}$\\
+				$y:= y^2$ & $y:=y^2$ & $y:=y^2$ & $y:=y^2$ &          & \\
+				$y:= y^2$ & $y:=y^2$ & $y:=y^2$ &    	   &	      & $y:=y \times x^7$\\               
+				$y:= y^2$ & $y:=y^2$ & $y:=y^2$ &          &          & \\
+				$y:= y^2$ & $y:=y^2$ &     		&	       &          & $y:=y \times x$\\       
+				$y:= y^2$ &			 &			&          &          & \\
+				$y:= y^2$ & $y:=y^2$ & $y:=y^2$ & $y:=y^2$ & $y:=y^2$ & $y:=y \times x^7$\\           
+				$y:= y^2$ & $y:=y^2$ & $y:=y^2$ & $y:=y^2$ &          & $y:=y \times x$	\\		
+			\end{tabularx}	
+			\newpage
+\item  	
+		\begin{tabularx}{\linewidth}{ p{16cm} p{1.5cm} }
+		LtoR dynamical $2^k$ sliding window method:  & $0\%$ 
+		\end{tabularx}	
+			\noindent
+			Adapt the previous method in minimizing the size of the window when possible.
+			First of all maximum length for the window has to be defined, then then bit are scan adapting the window size to isolate the zeros.
+
+			\begin{algorithm}[h]
+				\KwIn{$x,n \in \mathbb{N}$, $x \leq n$, ${d =  d_{t-1} d_1 d_0}_2$,  $k$}
+				\KwOut{ $ y   =  x^d \mod n$ }
+				$x_1 \leftarrow x$	\; 
+				$x_2 \leftarrow x^2$	\;
+				$PreComputation = [x_1, x_2]$\;			
+				\For{ $ i = 0 \to 2^{k}$ }
+				{						     
+					$PreComputation[i] = PreComputation[2i -1] \times x_2$ \;
+				}
+				$y \leftarrow 1$	\;
+				$i \leftarrow \lfloor ln_2(d)\rfloor $ \;
+				\While{$ i>0 $}
+				{			 
+					$d \leftarrow n \mod m $\;
+			        \If{$d_i = 0$}{
+				   		$ y = y^2 $\;
+						$ i= i-1 $\;
+					} \Else {
+                    find the longest bit string $e_i...e_l$
+                    such that $i-l+1 \leq k$ and $e_l=1$\;
+                    $ y = y^{i-l+1} \times x_{e_i..._{i+k-1}} $\;
+					}
+				}				 
+				\Return{$ y $}\;
+				\caption{LtoR dynamical $k$-Sliding window algorithm}
+			\end{algorithm}
+
+		\textit{Variants}\\
+
+			The here presented algorithm is one with dynamical length of window. 
+			Another simpler version would be to define the multiplication
+			with the bit string of constant length, giving up the condition '$e_l=1$'.
+			Also possible algorithm is right to left version
+
+\item 
+		\begin{tabularx}{\linewidth}{ p{16cm} p{1.5cm} }
+		The two type of sliding window method in a nutshell
+		\end{tabularx}
+		illustration with $w = 111001010001_2$
+		\begin{center}
+			CLNW:  $ \underline{111} \; 00 \; \underline{101} \; 0 \; \underline{001}_2$\\
+			VLNW:  $ \underline{111} \; 00 \; \underline{101} \; 000 \; \underline{1}_2$
+		\end{center}
+\end{itemize}

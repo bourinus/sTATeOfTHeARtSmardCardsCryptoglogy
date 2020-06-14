@@ -1,0 +1,93 @@
+\newpage
+
+\subsubsection{Randomized algorithms}
+\label{expRNDalgorithms}
+
+\begin{itemize}
+	\item  	
+		\begin{tabularx}{\linewidth}{ p{16cm} p{1.5cm}} 
+		Random RtoL $k$-ary method - \lokiquote{acisp-2009-tunstall}-  & $0\%$ \\ 	
+		\end{tabularx}
+
+			Is taken advantage of RtoL specificities to introduce some randomness.
+
+			\begin{algorithm}[h]
+				\KwIn{$x \in \mathbb{G}$, 
+					  $d \in \mathbb{N}$,
+					  $n \in \mathbb{N}$,
+					  $r$ number of values to store in memory
+					  }
+				\KwOut{ $ y   =  x^d \mod n$ }
+				\For{$ i = 1 \to k-1$ }
+				{	
+					$R[i] \leftarrow 1_\mathbb{G} $ \;
+				}	
+				$ S[0] \leftarrow x $ \;
+				\For{$ i = 1 \to r-1$ }
+				{	
+					$ S[i] \leftarrow S[i-1]^k $ \;
+				}
+				\For{$ i = 0\to r-1$ }
+				{	
+					$ D[i] \leftarrow  n \mod k $ \;
+					$ n \leftarrow \lfloor \frac{n}{k} \rfloor $
+				}
+				$ \gamma \leftarrow r-1$\;	
+				\While{$ n > 0$ }
+				{			
+				    $\tau = RandInteger(0..r-1) $ \;
+				    \If{$ D[\tau] \neq 0$ }{
+				    	$ R[D[\tau]] \leftarrow R[D[\tau]]\times S[\tau] $	
+				    	}
+					$ S[\tau] \leftarrow S[\gamma] $ \;
+					$ D[\tau] \leftarrow n \mod k $  \;
+					$ n \leftarrow \lfloor \frac{n}{k} \rfloor $ \;
+					$ \gamma \leftarrow \tau $  	
+				}							
+				\For{$ i = r-1 \to 0 $ }
+				{	
+					\If{$ D[i] \neq 0$ }{
+				    	$ R[D[i]] \leftarrow R[D[i]]\times S[i] $	
+				    	}					
+				}
+				$ y \leftarrow R[m-1] $ \;
+				\For{$ i = k-2 \to 1 $ }
+				{	
+					$ R[i] \leftarrow R[i]\times R[i+1] $ \;
+					$ y \leftarrow y \times R[i]$
+				}
+				\Return{$ y $}\;
+				\caption{Random Order - RtoL $k$-ary exponnetiation}
+			\end{algorithm}	
+
+			\underline{Example 1:} Taken form the original article\\
+			let's compute $z=x^{738530}$
+			Let's considere a $2^2$-ary method, $m=4$
+			\begin{itemize}
+				\item Setup phase
+				\begin{center}
+					$R = \{ 1,1,1 \}$
+				\end{center}
+				we fix $r=10$, therefore we have:
+				 %di = n mod m, n <- |n/m|
+				 %d0 = 738530 mod 4 = 2, n = 184632
+				 %d0 = 184632 mod 4 = 0, n = 46158
+				 %etc ...
+				\begin{center}
+					$S = \{ x,x^4,x^{16},x^{64},x^{256},x^{1024},x^{4096},x^{16384},x^{65536},x^{262144} \}$\\
+					$D = \{2,0,2,3,0,1,0,1,3,2\}$
+				\end{center}
+				Computation can be done by treating the elements of $S$ and $D$ in an arbitrary order.\\
+				$\gamma = 9$
+				\item Main loop phase\\
+				An arbitrary $\tau\in \{0, . . . ,9\}$ is chosen, and we compute $R[D[\tau]] =R[D[\tau]].S[\tau]$\\
+				( except when $D[\tau]$ is equal to zero when no operation is performed ).\\	
+				$R[1] = S[5].S[7] = x^{1024}.x^{16384} = x^{17408}$\\
+				$R[2] = S[0].S[2].S[9] = x^{16}.x^{262144} = x^{262161}$\\
+				$R[3] = S[3].S[8] = x^{64}.x^{65536} = x^{65600}$\\
+				\item Recombination phase\\
+				$z = R[1] R[2]^2 R[3]^3 = x^{17408} x^{2.262161} x^{3.65600} = x^{738530}$
+			\end{itemize}
+
+	
+\end{itemize}

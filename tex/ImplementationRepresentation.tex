@@ -1,0 +1,365 @@
+\subsection{Number representations}
+\label{RSA_representation}
+
+This section will be mainly dedicated to the different ways to represent 
+numbers \textit{i.e.} integers or relative numbers. Plan id the following:
+\begin{itemize}
+	\item  Classical $b$-arry representations
+	\item  Some binary representations
+	\item  Non adjacent representations
+\end{itemize}
+AIM: Change the representation of a an integers or relative numbers for a new one.
+What will be obtained might be a less simple, or might requires  more amount of digits but will be but richer in term of algebraic/computational proprieties(s).\\
+
+\noindent
+	\begin{mydef}{Canonical vs Non-Canonical representation}
+		\begin{itemize}
+			\item 'canonical' is used to indicate a standard way to represent a 
+			mathematical object under the form of a mathematical expression.
+    		This a particular convention that was accepted as standard among 
+    		an important number of possible conventions. 
+			\item 'non-canonical' by opposition means that the convention used to 
+			to represent a mathematical object under the form of a mathematical 
+			expression is not he standard one, therefore this expression is 
+			meaningless unless convention to which it is referring is specified.
+		\end{itemize}
+    \end{mydef}		
+
+Example:\\
+In geometry, the canonical way to represent objects is referring to a Cartesian 
+coordinate system system and no-one wonder what type of mathematical object 
+represent the following expression $(x-h)^2+(y-k)^2= \rho^2$, 
+(circle centered on $(h,k)$ and of radius $|\rho|$).
+\newpage
+\subsubsection{Mathematical notation}
+Two way to interpret Euclidean division: \\
+
+\begin{mydef}{Euclidean division:} \\
+	Given $a,b $ positive integers there exist a unique couple of integers $ (q,r)$ \\
+	such that decompose uniquely $a$ in the famous Euclidean form.\\
+	\textit{i.e.} Given $a,b \in \mathbb{N}$ $\exists! (q,r) \in \mathbb{N}^2$, such that:
+	\begin{center}
+			$a = b \times q + r$ with $0\leq r <b$\\
+	\end{center}
+\end{mydef}		 
+		As a consequence each number, can be decomposed the following way:\\
+		$n = 2^k \times b  + r$ with $0 \leq r <2^{k-1}$. \\
+		$n = 2^k \times b + r$ with $-2^{k-1}<r \leq 2^{k-1}$ \\\\
+		The first equality is the canonical one, it allows representation in any $b$-basis with positive digits, whereas the second one, not canonical, enable representations in any binary basis with positive and negative digits but with 
+		smaller absolute values -Useful for ECC, RSA with NAF exponent-.\\\\
+		Iterating the division process on $a$ from the highest power of $b$ to 0, a link is naturally created between polynomial in $b$ and representation in basis $b$.\\\\
+\textbf{Possible properties of $b$-basis representations}\\
+* position relativity: representation in which the localization of a digit matters\\
+* completeness for $\mathbb{S}$: each element of a set of number $\mathbb{S}$ can be represented\\
+* uniqueness for $\mathbb{S}$: each element of $\mathbb{S}$ admits only one representative.\\
+* homogeneity: representation in which all operations are performed in the same way.\\
+* optimality: representation in which a propriety is minimized -Length, Hamming weight, many others-
+among a larger family of representation.
+
+Remarks:\\
+* For positional representation system:
+the basis is always written the same manner, $10$, consequence of link between $b$-arry representation/polynomial expansion of variable $b$:\\
+$ 10 = 10_{10} $, $ 2 = 10_{2} $, $ b = 10_{b} $, $ -b = 10_{-b} $ \\
+* Interesting properties are the span and shape of $\mathbb{S}$:\\
+is this including negative number? is this a perfect, quite, strongly not, symmetrical span?\\
+* In the following section, we always have $a \in \mathbb{S}$
+
+Notation: \\
+* $b \in \mathbb{N}^*$, basis will be $b$ or $-b$ \\
+* $ \mathcal{D} $ is the digit space.\\
+* $t$ number of bits of the considered architecture
+
+\subsubsection{Classical $b$-arry representations}
+Here are approached some classical general representations.
+
+\begin{itemize}
+	\item Unary notation: representation with $b=1$, \textit{aka} 'Peano Unary system'.\\
+		Simplest way to represent integers numbers...\\
+		For that representation to include $0$ we impose digit space to admits two elements\\
+		$/!\backslash$ Formal -but non consistent with the general one- scripture
+		\begin{small}
+			\begin{center}	
+		$ a_{1} = \sum \limits_{i=0}^{t-1} a_i$ and $\forall i, a_i \in \mathcal{D} =\{0,1\}$ 	
+			\end{center}
+		\end{small}
+		* completeness for $\mathbb{S} = \llbracket 0, t \rrbracket$ \\
+		* no uniqueness neither a positional system\\
+		* the value 0 can only be implicitly represented by an empty digit string\\
+		* addition is in fact concatenation, homogeneous\\
+		
+	\item $b$-arry notation: general canonical representation in base $b$, for $b \in \mathbb{N} \backslash \{0,1\} $ :\\	
+		starting from the least significant digit, number is obtained via a polynomial in $b$ which coefficients are the digits of the number representative.
+		\begin{small}
+			\begin{center}	
+				$ a_{b} = \sum \limits_{i=0}^{t-1} a_i \times b^i$ 
+				and $\forall i, a_i \in	\mathcal{D} = \{0, ..., b-1\}$		
+			\end{center}
+		\end{small}	
+		% A = (b-1) * sum b^i,i=0,t-1 = (b-1) * B, and 
+		% B = (b^t-1)/(b-1)
+		* unique representation for $\mathbb{S} =\llbracket 0, b^{t}-1\rrbracket$\\
+		* homogeneity
+
+	\item Signed $b$-arry notation: representation in base $b \in \mathbb{N} \backslash \{0,1\} $, \textit{aka} 'Sign and Magnitude  in base $b$'
+		\begin{small}
+			\begin{center}	
+					$ a_{b,signed} = a_t \sum \limits_{i=0}^{t-1} a_i \times b^i$ and $\forall i, 
+					a_i \in \mathcal{D} = \{0, ..., b-1\}$ 		
+			\end{center}
+		\end{small}	
+		% from previous one
+		* completeness for  $\mathbb{S}=\llbracket 1-b^{t-1}, b^{t-1}-1\rrbracket$ \\
+		* non unique representation + 0 and -0\\
+		* non homogeneous system ! \\
+		* Simple to implement \\  
+		* Symmetrical span
+			
+	\item Nega $b$-arry notation: canonical representation in base $-b$ 
+		for $b \in \mathbb{N} \backslash \{0,1\} $ : 
+		\begin{small}
+			\begin{center}	
+					$ a_{-b} = \sum \limits_{i=0}^{t-1} a_i \times (-b)^i$ 
+					and $\forall i, a_i \in \mathcal{D}=\{0, .., b-1\}$ 		
+			\end{center}
+		\end{small}	
+		% AM = (b-1) * sum (-b)^i, i=0,t-1   and i \in 2N = (b-1) * BM
+		% BM = 		   sum (-b)^i, i=0,t-2   and i \in 2N
+		% BM = 		   sum   b^(2i), i=0, t/2-1 = (b^t-1)/(b^2-1)
+		% AM = (b-1) * (b^t-1)/(b^2-1)
+		%
+		% Bm =         sum (-b)^i, i=0,t-1   and i \in 2N+1
+		% Bm = 		   sum (-b)^i, i=1,t-1   and i \in 2N+1
+		% Bm =    -b * sum b^(2i), i=0, t/2-1
+		% Am =    -b * (b-1) * (b^t-1)(b^2-1)
+		%
+		%$ -b \frac{b^t-1}{b+1}, \frac{b^t-1}{b+1}$	
+		* completeness for a $\mathbb{S} = \llbracket -b \frac{b^t-1}{b+1}, \frac{b^t-1}{b+1}\rrbracket $ \\
+		* completeness for $\mathbb{S}$ without bit sign ! \\
+		* uniqueness for $\mathbb{S}$ \\
+		* although arithmetic operations are more complicated, homogeneity of operations ! \\
+		* $/!\backslash \hspace{1mm} \mathbb{S}$ not centered on 0, strongly asymmetrical span $\hspace{1mm} /!\backslash$
+
+	\item  One's complement in base $b$ 
+		\begin{small}
+			\begin{center}	
+					$ a_{b,1*} = (b^{t}-1)_b-a_b$ 
+					% a = (b^t-1) - a_{b,1*}	
+			\end{center}
+		\end{small}	
+		* except MSB, each bit is a power of $b$
+	\item  Two's complement in base $b$ 
+		\begin{small}
+			\begin{center}	
+					$ a_{b,2*} = b^{t}_b-a_b$ 				
+					% a = b^t - a_{b,2*}
+			\end{center}
+		\end{small}	
+		* except MSB, each bit is a power of $b$, except for the most significant bit,\\
+		whose weight is the negative of the corresponding power of $b$.
+\end{itemize}
+
+\subsubsection{Some binary representations}
+	\begin{itemize}	
+		\item  Binary notation: canonical representation base 2:
+		\begin{small}
+			\begin{center}	
+					$  a_{2}  =  \sum \limits_{i=0}^{t-1} a_i \times 2^i$ 
+					and $\forall i, a_i \in \mathcal{D}= \{0,1\}$		
+			\end{center}
+		\end{small}	
+			* Homogeneity\\
+			* Complete for $\mathbb{N}$\\
+			* Uniqueness for $\mathbb{N}$\\
+
+		\item Signed binary: canonical representation in base $2$, \textit{aka} 'Sign and Magnitude in base $2$':
+		\begin{small}
+			\begin{center}	
+					$  a_{2, signed} = {-1}^{a_{t-1}} \sum \limits_{i=0}^{t-2} a_i \times (2)^i$ 
+					and $\forall i, a_i \in \mathcal{D}=\{ 0, 1\}$ 		
+			\end{center}
+		\end{small}
+ 		+ Simple to implement. \\ 
+		+ Useful for floating point representation.  \\  
+		- Sign bit independent of magnitude \\ 
+		- can be  both + 0 and -0  (Makes math hard to do). \\  
+		
+		\item  One's complement canonical representation	
+			\begin{center}	
+				\begin{small}	
+					$ a_{1*} = (2^{t}-1)_2-a_2 =\overline{ a_{2} }$,			
+				\end{small}	
+			\end{center}
+			Except the MSB, each bit is a power of $2$\\
+			The MSB is seen as the negative of $(2^{t}-1)$.\\
+			And with a written as $ a_{1*} = \{a_{t-1}, a_{t-2}, ..., a_{1}, a_{0}  \} $ 
+			\begin{center}	
+				\begin{small}	
+					% a = (b^t-1) - a_{b,1*}	
+
+					$ a = - a_{t-1} (2^{t}-1) + \sum \limits_{i=0}^{t-2} a_i 2^{i}$
+				\end{small}	
+			\end{center}
+			* completeness for $\mathbb{S}=\llbracket 1-b^{t-1}, b^{t-1}-1 \rrbracket$ \\
+			* non uniqueness: two zeros $a_i=0$ and $a_i=1$\\
+			* Feature: +0 and -0 return TRUE when tested for zero, FALSE when tested for non-zero. 
+
+		\item  Two's complement canonical representation
+			\begin{center}	
+			If $a \geq 0$:
+				\begin{small}	
+					$ a_{2*} = a_2 $
+				\end{small}	
+			If $a \leq 0$:				
+				\begin{small}	
+					$ a_{2*} = 2^{t}_2-a_2 = \overline{ a_{2_{Signed}} }+1 $
+				\end{small}					
+			\end{center}
+			Except the MSB, each bit is a power of $2$\\
+			The MSB is seen as the negative of the corresponding power of $2$.\\
+			And with a written as $ a_{2*} = \{a_{t-1}, a_{t-2}, ..., a_{1}, a_{0}  \} $ 
+			\begin{center}	
+				\begin{small}	
+					$ a = - a_{t-1} 2^{t} + \sum \limits_{i=0}^{t-2} a_i 2^{i}$
+				\end{small}	
+			\end{center}
+			* completeness for $\mathbb{S}=\llbracket -b^{t-1}, b^{t-1}-1 \rrbracket$ \\
+			* homogeneity \\
+			* there is one zero only. \\
+			* multiplying 2's complement operands takes just about same amount of hardware as multiplying unsigned operand\\
+
+		\item Nega binary: canonical representation in base $-2$: \\ 
+		\begin{small}
+			\begin{center}	
+					$  a_{-2} =  \sum \limits_{i=0}^{t-1} a_i \times (-2)^i$ 
+					and $\forall i, a_i \in \mathcal{D}=\{-1, 0\}$ 		
+			\end{center}
+		\end{small}
+			* completeness for $\mathbb{S} \subset  \mathbb{Z} $ \\
+			* $/!\backslash \mathbb{S}$ not centered on 0, strongly asymmetrical span$/!\backslash$
+			* basic routines requires some efforts.\\
+
+	\item Binary Signed Digit representation:\\
+			Here is relaxed on condition on the digit of the representation, leading to non canonical representation.
+			Here they have value in $\{-1, 0 , 1\}$, but the formal decomposition remain the same:
+			\begin{center}
+				\begin{small}
+							$ a_{-1, 0 , 1} = \sum \limits_{i=0}^{t-1} a_i \times 2^i$  with $a_i \in \mathcal{D} =\{ -1,0,1\}$ \\
+				\end{small}
+			\end{center}
+			The consequence it that number are not uniquely decompose: 	this is not canonical. 	\\
+			On the other hand this additional degree of liberty allow to choose between	decompositions available.	
+
+	\item Canonical Binary Signed Digit representation: \textit{aka} 'Binary-NAF'\\
+			And precisely, without ambiguity, its name is '2-width Binary NAF'
+\footnote{the width refers to the number among which only one will be allowed to be a non zero.}\\
+			Here is relaxed on condition on the digit of the representation, leading to non canonical representation.
+			Here they have value in $\{-1, 0 , 1\}$, but if the formal decomposition remain the same, one additional condition
+			namely 'no adjacent 1' lead to one representation.
+			\begin{center}
+				\begin{small}
+					$ a_{2-NAF} = \sum \limits_{i=0}^{t-1} a_i \times 2^i$  with $a_i \in \mathcal{D} =\{ -1,0,1\}$ \\
+		    	 $\forall i \in \llbracket 0,t-1 \rrbracket,   a_i \times a_{i+1} =0$
+				\end{small}			
+			\end{center}	
+
+		\item Binary Alternating Greedy expansion	
+		this is a signed binary expansion, with the property that consecutive
+		non zero digit -even if separated by some 0- are opposed.
+		useful in several left-to-right algorihms
+
+		\item Zeckendorf representation:\\
+		A number can be decomposed in a unique way as a sum of Fibonnaci numbers,
+		in which there is no two consecutive Fibonnaci number used.
+		%* x^{F_n} can be computed with one initial squarring and only multiplication\\
+		There exist a signed digit Zeckendorf representation.\\
+		% http://www-pequan.lip6.fr/~bajard/GTArithIM/TRANSPARENTS/corps_finis/RAIM-Meloni.pdf
+		$31 = {1010010}_F = F_8 + F_6 + F_3$
+		\end{itemize}
+
+
+
+		\input{tex/ImplementationRepresentationNAF.tex}
+
+
+\subsection{Group representations}
+
+\subsubsection{Chinese Theorem of Remainders:}
+Elements of some finite fields $ \mathbb{Z}/{n \mathbb{Z}} $, 
+where $n$ is a product of primes
+\begin{itemize}
+	\item Canonical representation in $ \mathbb{Z}/{n \mathbb{Z}} $,\\
+	4 times slower tan CRT to achieve an RSA exponentiation.	
+	
+	\item Uses of Chinese theorem of remainders, 
+	smaller number fastening the computations.
+	Require a recombination step: Gauss, Garner, ...
+
+	\noindent
+	\textit{VS side channel cryptanalysis}\\
+Because of the recombination step, that can be side channel analysed or even
+perturbed, the CRT implementation bring also some potential weaknesses.
+\end{itemize}
+
+			\begin{algorithm}[h]
+				\KwIn{$p, q, S_p, S_q, q^{-1}  \mod p, p^{-1}  \mod q$}
+				\KwOut{$S = m^d \mod n$}	
+				$S \leftarrow 
+				S_p \times q \times (q^{-1} \mod p) +
+				S_q \times p \times (p^{-1} \mod q) $\;	
+				\Return{$ S $}												 				
+				\caption{Gauss recombination}
+			\end{algorithm}
+			Remark: very natural but terribly slow as two modular inversions are required!
+			\begin{algorithm}[h]
+				\KwIn{$p, q, S_p, S_q, q^{-1}  \mod p$}
+				\KwOut{$S = m^d \mod n$}	
+				$t \leftarrow S_p-S_q$\;
+				\If{ $t < 0$ }{ 
+				$t \leftarrow t+p$\;
+					} 
+				$t^{'} \leftarrow t \times (q^{-1} \mod p)$	\;
+				$S \leftarrow S_q + t^{'} \times q$\;	
+				\Return{$ S $}												 				
+				\caption{Unprotected Garner algorithm}
+			\end{algorithm}
+			
+			\begin{algorithm}[h]
+				\KwIn{$S_p, S_q, p, q, q^{-1}  \mod p$}
+				\KwOut{$S = m^d \mod n$}	
+				$t_0 \leftarrow S_p- S_q$\;
+				$t_1 \leftarrow t_0 +p$\;
+				\If{ $t_0 < 0$ }{ 
+				$t \leftarrow t_1$\;
+					}
+				\If{ $t_0 > 0$ }{ 
+				$t \leftarrow t_0$\;
+					} 	 
+				$t^{'} \leftarrow t \times (q^{-1} \mod p)$	\;
+				$S \leftarrow S_q + t^{'} \times q$\;		
+				\Return{$ S $}												 				
+				\caption{Non conditional Garner algorithm}
+			\end{algorithm}	
+			
+			\begin{algorithm}[h]
+				\KwIn{$S_p, S_q, p, q, q^{-1}  \mod p$}
+				\KwOut{$S = m^d \mod n$}	
+				$t_0 \leftarrow S_p- S_q$\;
+				$t_1 \leftarrow t_0 +p$\;
+				\If{ $t_0 < 0$ }{ 
+				$t \leftarrow t_1$\;
+					}
+				\If{ $t_0 > 0$ }{ 
+				$t \leftarrow t_0$\;
+					} 	
+				$t^{'} \leftarrow t \times (q^{-1} \mod p)$	\;
+				$S^{'} \leftarrow S_q + t^{'} \times (q+R)$\;
+				$ S \leftarrow S^{'}  \mod  N$\;	
+				\Return{$ S $}												 				
+				\caption{Non conditional DPA-protected Garner algorithm}
+			\end{algorithm}	
+
+
+
+
+
+

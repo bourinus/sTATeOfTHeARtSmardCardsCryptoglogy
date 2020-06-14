@@ -1,0 +1,108 @@
+\newpage
+\subsection{what exponentiation is about}
+\label{RSA_what_exponentiation_is_about}
+
+\cite{unibordeau-2006-bergson}\\
+\cite{preprint-2006-bernstein}\\
+
+
+
+The hereafter section is a little bit more theoretical	but
+necessary to understand what exponentiation is about.
+After each example, we saw the key role of intermediate exponentiations to obtain 
+the desired final result, study intermediate computation is the key for very fast 
+exponentiation.
+
+In fact this problem is a very good example of theoretical mathematics that have 
+a very concrete application. The concrete application in which we are interested
+is answer the to the following question: 
+
+what is the minimal number of multiplications 
+necessary to perform a given exponentiation ?
+
+\subsubsection*{Addition chain}	
+		
+Let's formalize this: due to the propriety of the exponential function this
+problem can be described as a problem of addition, and conduct to the following definition:
+
+\textit{Definition:}
+	A finite sequence of positive integers $1=a_0$, $a_1$, $a_r=n$ is called an 
+	addition chain for the number $n$ iff for each element $a_i$, but the first $a_0$, 
+	there exist two elements in the list $a_j$ and $a_k$ such that:
+	\begin{center}
+	$a_i  = a_j+a_k$ with $k \leq j \leq i-1$
+	\end{center}
+	For example $\{\;1,\; 2,\; 4,\; 5,\; 8,\; 10,\; 13\}$, length 7.
+	
+\textit{Definition:}
+	The shortest addition chain for n is an addition chain for n 
+	with the smallest possible number of elements.
+	The length of this shortest addition chain for $n$ is noted $l(n)$. \\ 
+	For example $\{\;1,\; 2,\; 3,\; 6,\; 12,\; 13\}$, length $6=l(13)$.
+%		\begin{algorithm}[h]
+%			\caption{Exponentiation in term of Addition chain}
+%			\begin{algorithmic}
+%			\REQUIRE{$x,$ an addition chain $,\{ n_{1} , ...,n_l\},$ computing $d$}
+%			\ENSURE{$ y   =  x^d \mod n$} 
+%			\STATE $y \leftarrow 1$		
+%				\FOR{$i = 1 \to l$} 
+%				 	\STATE $(s,r)$ as $n_i = n_s + n_r$
+%					\STATE $y \leftarrow x^{n_s} \times x^{n_r} $	
+%				\ENDFOR
+%			\RETURN{$ y $}
+%			\end{algorithmic}
+%		\end{algorithm}\\
+\begin{algorithm}[h]
+	\KwIn{$x,$ an addition chain $,\{ n_{1} , ...,n_l\},$ computing $d$}
+	\KwOut{ $ y   =  x^d \mod n$ }
+	 $y \leftarrow 1$ \;
+	\For{$i  = 1$ \textbf{to} $l$}
+	{
+	$(s,r)$ as $n_i = n_s + n_r$
+	$y \leftarrow x^{n_s} \times x^{n_r} $				
+	}									 
+	\Return{$ y $}\;
+	\caption{Exponentiation in term of Addition chain}
+\end{algorithm}
+		
+\textit{Definition:}
+		A Brauer chain is an addition chain in which every member after the 
+		first is the sum of the immediately preceeding element and a 
+		previous element (possibly the same element). More formally: 		 
+		\begin{center}
+		$a_i  = a_{i-1}+a_k$ with $k \leq i-1 $
+		\end{center}	
+		For example $\{\;1,\; 2,\; 3,\; 6,\; 7,\; 13\}$ is one,
+		$\{\;1,\; 2,\; 4,\; 5,\; 8,\; 13\}$ is not.
+			 
+\underline{Example:} Shortest addition chain for $n=23_{10}=10111_2$ \\ 
+		Saved value: value: $x^{4},\;x^{5}$.\\			
+		\begin{tabularx}{\linewidth}{ p{16cm} p{2cm} }
+			$y:=y \times x$ 		& $(y=x^{1})$\\
+			$y:=y^2$ 				& $(y=x^{4})$\\
+			$y:=y \times x$ 		& $(y=x^{5})$\\
+			$y:=x^{4} \times x^{5}$ & $(y=x^{9})$\\
+			$y:=y^2$ 				& $(y=x^{18})$\\
+			$y:=y \times x^{5}$     & $(y=x^{23})$				
+		\end{tabularx}
+		Remark that the following intermediate exponentiation were computed:			
+		$ x^{1},\; x^{2},\; x^{4},\; x^{5},\; x^{9},\; x^{18},\; x^{23} $,
+		length 7. 
+		\vspace{3mm}
+			
+\subsubsection*{Addition/Subtraction chain}	
+
+\subsubsection*{Practical consideration}
+
+to find the shortest addition chain is 'NP difficult', and interesting algorithm
+shall be hardware compatible (no smart car runs a 5-ary method with 5 choices of
+multiplication at each iteration of the algorithm or at least its seems).
+
+A same addition chain can be computed with different number of step depending 
+on the algorithm (S\&M \textit{vs} Atomic S\&M), changing the speed but impacting also the side channel leakage.
+
+
+	
+	 also exists other techniques fastening the computation of a
+	 product of several exponentiation at the same time Strauss -1964-,Yao and Pippenger -1976-
+

@@ -1,0 +1,36 @@
+\subsubsection*{Warning !}
+Note that of the following algorithms might be implemented indifferently
+in left-to-right or for right-to-left, or also in atomic or non atomic
+version, and so on and so on... A lot of combination are possible. Warning
+\subsubsection{Convention and Names !}
+
+The famous routine \textbf{"Square \& Multiply"} was named this way for a descriptive purpose: when we are using it we are effectively squaring and multiplying.
+
+On the other hand it's mathematical name is \textbf{"dichotomic exponentiation"}
+insisting on the fact that to achieve the exponentiation, is proceeded to recursive
+calls to a sub-routine and that for each call there are two possibility 
+multiplication.
+
+The name \textbf{"binary method"} has been given with the same spirit.
+Starting from now we adopt this kind of naming for every algorithm relative to
+exponentiation. In this section will be viewed other algorithm scanning not
+one bit but several bits of the exponent at each recursion. To have a clear
+naming we extend the previous convention to this other class of algorithms
+with the following convention:
+
+\begin{center}
+\textbf{2-ary method:} each recursion
+$2^1$ possibilities and bit scanned $1$ by $1$. \\
+\textbf{$ \mathbf{2^k}$-ary method:} each recursion
+$2^k$ possibilities and bit scanned $k$ by $k$.
+\end{center}
+\vspace{3mm}
+Some might object that could be said that a 3-arry method is scanning bits 3 by 3.\\
+\underline{Example:} What about $ x ^ {27} $ without multiplying?\\
+If you have an efficient algorithm to compute third power and
+you build on it an exponentiation algo with at each recursion
+a possible multiplication by $x^0$, $x^1$, $x^3$.
+This algorithm works in a representation of 27 in base 3, and can't be named
+with the other convention.
+It's named trichotomic exponentiation, ternary method or cube and multiply.
+\vspace{3mm}

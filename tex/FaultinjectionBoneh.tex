@@ -1,0 +1,109 @@
+\item Boneh - \nocite{eurocrypt-1997} \lokiquote{eurocrypt-1997-boneh}\\
+\textit{aka} paper countaining 'The Bellcore attack' , 'The Flip bit attack I'
+
+\underline{Arround this paper:}
+Sorry but there is no Dr Bellcore, 'Bellcore' stands for 
+Bell Communications Research a formerly famous center of research 
+now closed. The Bellcore attack is in reality the 
+'Boneh-DeMillo-Lipton attack' among the first one to deals with FI.
+
+\underline{\textbf{Paper's sum-up:}}\\
+Present FI attack breaking RSA in its CRT version with one faulty
+signature and no particular no fault model.
+Then, authors consider attack Fiat-Shammir scheme, Schnorr's scheme, 
+RSA in RtoL version assuming a fault in some register , breaking those system 
+with a much more larger number of fault.
+
+\textbf{Summing up \textit{CRT-RSA's vulnerability to hardware faults}} 
+\textit{'The Bellcore attack'}
+
+\underline{Type of attack:}\\
+unknown $\&$ reproducible input attack - Dr Bellecore's version\\
+known $\&$ not reproducible input attack - Dr Lenstra's version
+
+\underline{Targets:}
+Every RSA algorithm using the Chinese theorem of the remainders.
+
+\underline{Fault model}
+No particular fault model is assumed, any random value for $S_{p}^{'}$
+respecting the condition $S-S^{'}$ is not divisible by $p$ is suitable 
+for this attack.
+Following Gauss, the authors decompose the recombination the following way:
+\begin{center}
+$S = a \times S_p + b \times S_q $
+\end{center}
+Then, they assume one of the partial encryption were faulted:
+\begin{center}
+$S^{'} = a \times S_{p}^{'} + b \times S_{q} $
+\end{center}
+Taking in account that statistically $S-S^{'}$ is not divisible by $p$
+\begin{center}
+$q = gcd(S-S^{'}, n)$
+\end{center}
+Informed that an important paper was to be published but ignoring the details,
+Arjen Lenkstra found a version of this attack requiring only one faulty signature
+and the message. Also exit another version of this attck by Jorn-Marc Schmidt,
+in his master repport, finding the key with two faulty signastures and their messages.
+
+
+\textbf{Summing up \textit{ Breaking other implementations of RSA}} 
+\textit{'The Flip bit attack I'}
+
+\underline{Type of attack:}
+randomly choosen plaintext attack, correct signature not mandatory\\
+reproductible plaintext are not necessary\\
+adaptative recovering algorithm: fault from other model are tolerated.
+
+\underline{Targetted:}
+Targets straightforward RSA using the S\&M algorithm in LtoR version.
+		
+\underline{Fault model}
+A single random bit has been flipped in the output register of the
+S\&M algorithm in RtoL version.
+ 
+\underline{Theorem:} (Efficiency)
+ With probability at least 1/2 , the secret exponent s can be extracted
+from a device implementing the first exponentiation algorithm by collecting
+(n/m)log(n) faults and $O(2^m n^3 )$ RSA encryptions for testting motives, 
+for any $1 \leq m \leq n$. For small public exponent d this takes $O(2^m n^4 )$ time. 
+For random d it takes $O(2^m n^5 )$ time.
+
+Notations:	\\
+\begin{tabularx}{\linewidth}{ p{6cm} p{7.5cm} l}
+	Variable & Description & Status\\ 
+	$ l = \frac{n}{m} log_2(n)$ & number of faults & known\\
+	$(M_i)_{1 \leq  i \leq l}$ & Set of random of random messages & known\\ 
+	$(E_i)_{1 \leq  i \leq l}$ & Set of corresponding signatures & unknown\\ 
+	$(E^{'}_i)_{1 \leq  i \leq l}$ & Set of faulted signatures & known\\ 
+	$(k_i)_{1 \leq  i \leq l}$ & index of the of fautled loop for $E^{'}_i$ & unknown\\
+    $ s_n s_{n-1} ... s_{1}$ & bit of the secret exponnent & unknown\\
+    $ s_n s_{n-1} ... s_{k_i} $ & bit already guessed  & known\\
+    $ s_{k_i-1} s_{k_i-2} ... s_{k_{(i-1)}} $ & to guess bits  & unknown\\    
+\end{tabularx}	
+
+	\begin{algorithm}[h]
+		\KwIn{$x,n \in \mathbb{N}$, $x \leq n$, ${d =  d_{t-1} d_1 d_0}_2$}
+		$y \leftarrow 1$	\;	
+		\For{  \textsf{all lenght  } $r=1,2,... $ }
+		{			 
+	 		\For{  \textsf{all r-bits candidates  } $u = u_{k_i-1}u_{k_i-2}...u_{k_{i}-r} $ }
+			{	
+			\textsf{form full candidate: }		 
+			 $\omega = \sum \limits_{j=k_i}^{n}       s_j 2^j +
+			           \sum \limits_{j=k_i-r}^{k_i-1} u_j 2^j $\; 
+			\textsf{test full candidate: }		  
+			 	$\exists \, ? e \in \{0, ... ,n\} / (E^{'}_j \pm 2^e M_j^\omega)^d = M_j \mod N$\;
+			 \If{yes }{output: $u_{k_i-1}u_{k_i-2}...u_{k_{i}-r} $}	
+ 			 \If{no } {reject candidate}		 		
+			}		
+		}									 
+		\caption{Boneh's flip bit attack recovering algorithm}
+	\end{algorithm}
+	
+	Finally, the set of index of the faulted loop for $E^{'}_i$  is assumed to be 
+sorted thanks the natural order, consequence with probability $p> 50 \%$, 
+we have: $ k_{i+1}-k_{i}<m$. This section of the article finishes with a proof
+that false positive\textit{i.e.} wrong candidate that passed the test, are rare.
+
+	
+

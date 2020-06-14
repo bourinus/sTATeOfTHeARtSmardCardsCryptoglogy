@@ -1,0 +1,61 @@
+\newpage
+\subsubsection{Square free algorithms}
+
+\cite{indocrypt-2011-clavier}\\
+
+$x \times y = \frac{(x+y)^2-x^2-y^2}{2}$\\
+
+$x \times y = \frac{(x+y)^2}{2}-\frac{(x-y)^2}{2}$\\
+
+Notation use for compactness and efficiency\\
+
+$
+\begin{pmatrix}
+1 & 1 & 1 & 0 & 2 & 1 & 1 & 1 & 2 & 1\\
+2 & 0 & 1 & 2 & 2 & 2 & 2 & 2 & 3 & 0\\
+1 & 1 & 3 & 0 & 0 & 0 & 0 & 2 & 0 & 0\\
+3 & 3 & 3 & 0 & 3 & 3 & 1 & 1 & 3 & 1
+\end{pmatrix}
+$
+
+%Alg. 3.1 Left-to-Right Atomic Square Always Exponentiation with (1)
+%Input: m, n ∈ N, m < n, d = (d k−1 d k−2 . . . d 0 ) 2
+%Output: m d mod n
+%1: R 0 ← 1 ; R 1 ← m ; R 2 ← 1 ; R 3 ← m 2 /2 mod n
+%2: j ← 0 ; i ← k − 1
+%3: while i ≥ 0 do
+%4:
+%R M j,0 ← R M j,1 + R M j,2 mod n
+%5:
+%R M j,3 ← R M j,3 2 mod n
+%6:
+%R M j,4 ← R M j,5 /2 mod n
+%7:
+%R M j,6 ← R M j,7 − R M j,8 mod n
+%8:
+%j ← d i (1 + (j mod 3))
+%9:
+%i ← i − M j,9
+%10: return R 0
+%
+%
+%
+%Alg. 3.2 Right-to-Left Square Always Exponentiation with (2)
+%Input: m, n ∈ N, m < n, d = (d k−1 d k−2 . . . d 0 ) 2
+%Output: m d mod n
+%1: R 0 ← m ; R 1 ← 1 ; R 2 ← 1
+%2: i ← 0 ; j ← 0
+%3: while i ≤ k − 1 do
+%4:
+%j ← d i (1 + (j mod 3))
+%5:
+%R M j,0 ← R M j,1 + R 0 mod n
+%6:
+%R M j,2 ← R M j,3 /2 mod n
+%7:
+%R M j,4 ← R M j,5 − R M j,6 mod n
+%8:
+%R M j,3 ← R M j,3 2 mod n
+%9:
+%i ← i + M j,7
+%10: return R 1

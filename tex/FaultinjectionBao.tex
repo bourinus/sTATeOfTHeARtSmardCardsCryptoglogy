@@ -1,0 +1,57 @@
+\item Bao - \lokiquote{spw-1997-bao} \\
+\textit{aka} apper countaining the 'flip bit attack'
+
+\underline{Around the attack:}
+The attack presented by Sciventure is in fact the second one much more 
+realistic in its fault model. One of the very first paper on the subject.
+
+\textbf{Paper's sum-up:}
+Attack the RSA algorithm in its straightforward version, the ElGamal signature
+scheme, the Schnorr signature scheme, and the DSA. 
+RSA is attacked in two different ways: the first attack aim to flip on bit of the
+message, the other one aiming to flip on bit of the exponent.
+
+\underline{Fault model:}
+Unrealistic: the first fault model - precisely flip one bit  in $m^{2^i}$ -
+appears to be completely unaplicable. Certainly that to flip one bit of an 
+exponent is an (difficult but) achievable objective ...
+
+\underline{Type of attack:}\\
+randomly chosen $\&$ reproducible plain-text attack\\
+
+\underline{Target:} S \& M algorithm in LtoR and RtoL version.
+
+\underline{Counter measure}
+Nothing said bout that, because the authors give 
+their own counter measure to their attack.\\
+
+\textbf{Summing up \textit{ Attacking the RSA Scheme}}
+ \textit{'flip bit attack II'}
+
+\textbf{Notation:} let $m$ be the plain-text, $c$ the cyphertext and $t$ and
+their number of bits, with this, the authors define, which allow them to 
+write the cypher text as a product:
+\begin{center}
+$\forall i \in [0,t-1]$ $m_i = {m^2}^i \mod n$\\
+$c ={c_{t-1}}^{d_{t-1}}...{c_i}^{d_i}...{c_1}^{d_1}{c_0}^{d_0} \mod n$
+\end{center}
+\textbf{Attack I:}
+the message has been faulted, with a single bit flip:
+\begin{center}
+$c' ={c_{t-1}}^{d_{t-1}}...{c'_i}^{d_i}...{c_1}^{d_1}{c_0}^{d_0} \mod n$
+\end{center}
+Then 
+$ \frac{c'}{c} = \frac{{c'_i}^{d_i}}{{c_i}^{d_i}} $ can be evaluated, 
+on the other hand can be also calculated the $t^2$ possible values,
+if a match is found then $i$ is known, $d_i=1$.\\
+\underline{Limitation}\\
+* only one $m_i$ contain one bit of error \\
+* no propagation of error is tolerated, if $m$ is modified, all $m_i$ are\\
+
+\textbf{Attack II:}
+Approximately the same faulting only one bit of the exponent.
+
+\underline{Limitation}\\
+* only one $d_i$ contain one bit of error \\
+
+

@@ -1,0 +1,64 @@
+\end{itemize}
+\subsubsection{Optimized pre-computations}
+\begin{itemize}
+	\item  	
+		\begin{tabularx}{\linewidth}{ p{16cm} p{1.5cm}}
+		LtoR Optimized $2^k$-ary exponentiation: -\textit{?}-  & $0\%$
+		\end{tabularx}	
+			\noindent
+			Optimization of the previous method, only even power of $x$ are stored only. 
+			Require $ 2^{k-1}-1 $ precomputed values overall.
+			\vspace{3mm}
+			\begin{algorithm}[h]
+				\KwIn{$x$, ${d =  d_{t-1} d_1 d_0}_{2^k}$}
+				$y \leftarrow 1$	\;	
+
+				$x_2 \leftarrow x^2$ \;	
+				$\forall i = 0    {k-1}/2$, $x_{2i+1} = x^{2i-1} \times x_2$ \;		 
+				\For{$ i = 0 \to t-1$ }
+				{	
+					 $y = x^{2^k}$ \;
+					 \textbf{define:} $d_i = 2^{h_i} \times u_i $ 
+					 where $u_i$ is odd and $ h_i $ maximal	\;		
+					$y = {( y^{2^{k-h_i}} \times x_{u_i} )^2}^{h_i} $
+				}										 
+				\Return{$ y $}\;
+				\caption{Optimized  LtoR $2^k$-ary method}
+			\end{algorithm}			
+						
+		\underline{Example:} LtoR Optimized $2^k$-ary exponentiation\\
+			Let's assume that $m=8$ \textit{i.e.} $k=3$ with $n=326_{10}=101\;000\;110_2$ 
+			the method start scanning the bits from their MSB but three by three.
+			The precomputed values are:   $x^3$, $x^5$, $x^7$.
+			\begin{tabularx}{\linewidth}{ p{2cm} p{2cm} p{2cm} p{8cm} p{2cm}}
+				$y:= 1$ & & & &\\
+				$y := y ^2$ & $y := y ^2$ & $y := y ^2$ 			& 
+				$y := y  \times  x^5$   &	$(y=x^5)$ \\
+				$y := y ^2$ & $y := y ^2$ & $y := y ^2$ 			&
+				$y := y  \times  x^0$ & $(y=x^{40})$\\
+				$y := y ^2$ & $y := y ^2$ & $y := y  \times  x^3 $	& 
+				$y := y  \times  x^2$ & $(y=x^{326})$
+			\end{tabularx}
+			
+			Practical remark:\\
+			\begin{center}
+			On a SPA point of view it is crucial to know whether or not\\
+			the implementation is saving pre-computation !
+			\end{center}						
+			\begin{itemize}
+				\item if precomputed value are optimized:
+				the goal become to discriminate elevation to the $8^{th}$ power 
+				from multiplication by $(x^i)_{ 2 \leq i \leq7 }$ and in this case 
+				we will always have sequence of elevation to the $8^{th}$ power then 
+				a multiplication (or not). But the pattern of the curve should match 
+				exactly the key.
+				
+				\item in this case we will not always have sequence of elevation 
+				to the $8^{th}$ power then a multiplication (or not). Compare the last
+				 line of the previous example and the same line with the 8-arry method.
+			\end{itemize}
+			
+		 \textit{Variants:}\\
+			 * RtoL\\
+			 * Atomic version\\
+			 * Multiply always\\

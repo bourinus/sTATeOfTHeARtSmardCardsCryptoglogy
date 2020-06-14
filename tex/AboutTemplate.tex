@@ -1,0 +1,489 @@
+\begin{center}
+	Original paper, presenting Template Attacks on stream cyphers with Point Of Interest \\
+	\lokiquote{ches-2002-chari} 
+\end{center}
+\section{The original template attack}
+
+
+Template attacks\footnote{
+\lokiquote{wisa-2008-medwed},\lokiquote{wisa-2008-schmidt},\lokiquote{wisa-2008-herbst}
+} 
+have been introduced by \citeauthor*{ches-2002-chari}, from IBM research, in 2002, originally to attack stream-cypher and block-cypher cryptosystems and being able to break a system with very few recorded traces, possibly one.
+
+
+Belonging to the family of side-channel attacks as it exploits the fact that power consumption
+of depend on the data processed, it is however very different
+from SPA/DPA and their variants of all order as template attack is a 
+\textit{two steps attack}.
+
+%\mathcal{H}
+
+\subsection*{First step, the setup phase:}
+
+A template attack begins exactly as DPA attacks does by selecting a target:
+a variable that appears \textit{or not} during the computation and that will be written as
+$h=h(m,k)$ a function of the plain-text and the key.
+Another parallel with standards DPA attacks, is that exhaustive enumeration of the values
+taken by this targeted variable will have to be practical in this attack.
+
+For each of these possible values, many traces shall be recorded -around 1000- so that 
+a 'template' could be built, characterizing with precision the noise of this packet by 
+a multivariate normal distribution the noise that can be observed. 
+This elaborated mathematical model, permit to approach a more complex leakage 
+model than the linear one, as DPA/CPA is usually doing.
+
+Note that in this description already lies several attacks in the 
+definition of $h$, all with different feasibilities, we can cite the all inputs of an S-boxes, 
+only the keys related to this S-box,
+or the output of an S-box, or its hamming weight, etc... Depending on this definition
+there will have more or less templates to built and then evaluate: and without surprise
+the more templates there is the more powerful the attack is but also the 
+less practicable the attack becomes...
+
+To initiate the setup phase the definition of $h$ have to be chosen.
+Then recorded traces will be sorted depending on the particular value $\hat{h}$  that  $h$ has for each of them.
+Note that to characterise efficiently the distribution of the noise associated to one of the packet thereby defined each packet shall have its elements the most 'randomly chosen'
+\footnote{a clearer definition of this meaningless expression is possible}.
+
+\newpage
+The template associated to the particular value $\hat{h}$ of the variable $h$, 
+is the pair $ \mathcal{T}_{\hat{h}} = ( m_{\hat{h}} ,\Sigma_{\hat{h}} )$, where:
+	\begin{itemize}
+		\item $ m_{\hat{h}} $ is the average of the $\hat{h}$-packet 
+		\item $ \Sigma_{\hat{h}} $ is built upon the noise covariance matrices of the $\hat{h}$-packet.
+	\end{itemize}
+
+Wikipedia - \textit{Covariance matrix} :\\
+let's $\vec{X}$ be a vector composed of $n$ random variables 
+$(X_i)_{1 \leq i \leq n}$,
+each of them having a finite variance, then the covariance matrix 
+$\Sigma_{ \vec{X} }$ is a 
+$ n \times n $ matrix and is defined by
+is defined by its components:
+\begin{center}
+	on the diagonal $\Sigma_{ \vec{X} }  = var(\vec{X})$ \\
+	\vspace{1mm}
+	out of the diagonal $\Sigma_{ \vec{X} }(i,j) = Cov(X_i, X_j)$
+	\end{center} 
+Where : 
+\begin{center}
+$Cov(X_i,X_j) = \mathbb{E}[(X_i-\mathbb{E}[X_i])(X_j-\mathbb{E}[X_j])]$
+\end{center} 
+
+\textbf{THEN:}
+Keeping the same notations, to compute the covariance matrix 
+$ \Sigma_{\hat{h}} $, requires to define :
+\begin{center}
+$X_1 = \{$  first points  of all traces $\}$ \\ 
+$X_2 = \{$  second points of all traces $\}$ ...\\
+defining $X$ as a vector with $poi$ elements 
+\end{center}
+The  matrix $ \Sigma_{\hat{h}} $ shall be a $poi \times poi$ 
+matrix, because of size of $t-m_h$ ($poi$) in the following formulas.
+
+
+\subsection*{Second step, the attack phase:}
+
+At this point, after the setup phase, what we manage to built a formula to evaluate the conditional probability 
+$ \mathscr{P}( \mathrm{A} | \mathrm{B} )$ of an event $\mathrm{A}$,'a trace is recorded' , happening if $\mathrm{B}$,
+'$\mathcal{H}=h$', is certain. \\
+A trace $t$ is recorded:
+\begin{center}
+$\mbox{\Huge}{ \mathscr{P}(t | h) = \frac{ 1 }{ \sqrt{ (2\pi)^p |{\Sigma_h}| } } 
+				\exp^{( -\frac{1}{2} (t-m_h)^t {{\Sigma_h}}^{-1} (t-m_h) )}	
+				}  $			
+\end{center}
+A noise $x$ is recorded:
+\begin{center}
+$\mbox{\Huge}{	\mathscr{P}(x_h | h)   =\frac{ 1 }{ \sqrt{ (2\pi)^p |{\Sigma_h}| } } 
+				\exp^{( -\frac{1}{2} {x_h}^t {{\Sigma_h}}^{-1} x_h )}			
+				}  $			
+\end{center}
+Where:
+\begin{itemize}
+	\item $ |{\Sigma_h}| $ is the determinant of the $ {\Sigma_h} $ matrix
+	\item $ {{\Sigma_h}}^{-1} $ is the inverse of the $ {\Sigma_h} $ matrix
+\end{itemize}
+
+
+The Maximum likelihood principle:
+
+When the attacker have a trace $t$ he/she then evaluate the probability
+$\mathscr{P}(t | h)$ all the possible value of $h$. The output is constituted 
+of all the value $k$, linked to $h$ such that the corresponding probability 
+are sorted form the most probable to the less one.
+
+
+The main interest of this attack is that the two steps can be done on two different,
+but identical, chips. The setup phase can then be achieved on a clone of the targeted 
+device, and in a second time only the attack phase is performed on the targeted device,
+with very few power consumption records.
+
+\underline{Proposition:}\\
+Under the Gaussian assumption and if only recorded trace, noted $t$, is available, the maximum likelihood principle
+while applied to two equally possible hypothesis simplifies to the following comparison:
+
+$$\mbox{\Huge}{
+				(t-m_{h0})^t {{\Sigma_{h0}}}^{-1} (t-m_{h0}) 
+			   -(t-m_{h1})^t {{\Sigma_{h1}}}^{-1} (t-m_{h1})  \leq
+			   \ln (|\Sigma_{h0}|)-ln(|\Sigma_{h1}|)	
+				}  $$	
+				where a decision is made in favor of $H_1$ if the above inequality is true and in favor of $H_0$ otherwise.
+\newpage
+\section{Practical improvements}
+The previous attack is very powerful indeed due to the elaborated mathematical model underlying
+but also absolutely impracticable in the real world, even with good computers for the same reason.
+Hereafter are listed the two way of making Template Attack more feasible and finally a
+   remark on the importance of signal processing before building the templates.
+\begin{itemize}
+	\item Point Of Interests: '\textit{reduced traces to some specific points}'\\
+	The idea is to perform the attack not on the whole traces but 
+	only on traces reduced to few decades of interesting points. 
+	For each value of the selected variable has been recorded a packet of $n_i$ 
+	traces,	of average $\mu_i(t)$ and of variance $\sigma_i(t)$, then different 
+	functions of time can be considered to define Points of interest with the 
+	abscissas of their highest pikes, sorted in term of efficiency:	 
+	\begin{itemize}
+		\item Chari\textit{\&al.} in \lokiquote{ches-2002-chari}  
+		difference of average signals: 
+		First proposed method for selection of points for some $i$ and $j$ select only 
+		the points where large difference shows up.
+		\begin{center}
+		$d(t) =   \mu_i(t)-\mu_j(t)  $ 
+		\end{center}
+		
+		\item Rechberger\textit{\&al.} in \lokiquote{wisa-2004-rechberger} 
+		Sum Of Difference  of average signals:	
+		Filter some noise but positive and negative quantity compensate each other and hide informations.		
+		They also showed the crucial importance of two parameters to choose point of interest: 
+		a minimum distance of one clock cycle and a heigh greater than the noise floor.
+		\begin{center}
+		$sod(t) =  \sum \limits_{ i < j }  ( \mu_i(t)-\mu_j(t) )	 $
+		\end{center}
+	
+		\item Gierlichs\textit{\&al.} in \lokiquote{ches-2006-gierlichs}:
+		 Sum Of Squared Difference of average signals:\\
+		solve the previous problem but the noise is more present also, small contribution are crushed.
+		\begin{center}
+		$sosd(t) =  \sum \limits_{ i < j }   ( \mu_i(t)-\mu_j(t) )^2	 $
+		\end{center}
+		
+		\item Agrawal\textit{\&al.} in 	\lokiquote{ches-2003-agrawal}: 
+		Sum of squared $t$-values:\\
+		This method seems to be the chosen one in most of the cases nowadays. 
+		\begin{center}
+		$sost(t) =  \sum \limits_{ i < j } 
+		\frac{
+ 		 ( \mu_i(t)-\mu_j(t) )^2	}{
+ 		 (  \frac{ {\sigma_i}^2 }{n_i} + \frac{ {\sigma_j}^2 }{n_j} )(t) } $
+		\end{center}
+		where $n_i$ and $n_j$ are size of the different packet.
+	\end{itemize}
+
+	\item Principal Component Analysis: 
+	'\textit{analyse only most importnant part of $\Sigma_h$}'\\
+	Archambau \textit{\&al.} in \lokiquote{ches-2006-archambeau}
+	published an article to apply the famous statistical method called 
+	Principal component analysis which technique reduces the dimension of the 
+	covariance matrix by projection into the subspace spanned by the eigenspaces
+	of the highest eigenvalues.
+
+
+	\item Signal processing and acquisition: 
+	\textit{'analyse transformed traces'}
+	\begin{itemize}
+		\item  Rechberger\textit{\&al.} in \lokiquote{wisa-2004-rechberger} 
+		In a practical study advised to perform template attacks not on the time 
+		domain but on the frequency domain with significant improvement of the 
+		result, especially for noisy traces.	
+	
+		\item  El Aabid\textit{\&al.} in 
+		\lokiquote{jce-2012-elaabid} In a practical study showed 
+		the crucial importance of two parameters: the chronological synchronization
+		and the vertical scale. They shall be the same for all traces.	
+	\end{itemize}
+
+	\item Reduced matrix:
+	\textit{'definition of the matrix $\Sigma_h$ can be simplified'}
+	\begin{itemize}
+		\item[1-]  Fill only the diagonal, computation of $\Sigma_h^{-1}$ trivial	
+		\item[2-]  Stochastic attack, see section \ref{The_stochastic_attack}.		
+	\end{itemize}
+\end{itemize}
+
+Normally nowadays every template attacks shall take in account those approaches.
+
+
+
+
+
+
+\newpage
+\section{Template based DPA attacks:}
+
+Two ways to turn template attacks to more DPA like attack, \textit{i.e.} 
+to attack recovering bits of the keys from 'a lot' of traces. The first 
+one is applying template attacks to several available traces the second 
+one is skipping the setup phase and give a new metric for DPA.
+
+\subsection{Template attack with several traces}
+ Bayes' theorem allows us to evaluate the probability of the event
+ "the sub key used was $ k $ given that $ x $ is recorded". 
+\begin{center}
+$$\mbox{\huge}
+{ \mathscr{P}(\mathcal{H}=\hat{h}| t) = 
+\frac{ \mathscr{P}(t | \hat{h} )\mathscr{P}(\hat{h}) }{ \sum_j \mathscr{P}(t | h_j).\mathscr{P}(h_j) } }  $$
+\end{center}
+It also permit us to consider the case of a set of traces $\mathbf{T}$ available during the attack phase:
+\begin{center}
+$$\mbox{\Huge}{ 
+\mathscr{P}(\mathcal{H}=\hat{h} | \mathbf{T}) =
+\frac{
+\left( \prod\limits_{i=1}^D\mathscr{P}(t_i | \hat{h}) \right).\mathscr{P}(\hat{h})
+}{
+\sum\limits_{l=1}^H
+\left( \left( \prod\limits_{i=1}^D\mathscr{P}(t_i | h_l) \right).\mathscr{P}(h_l)\right)
+}
+				}  $$			
+\end{center}
+
+
+\subsection{DPA-Template attack}
+The classical DPA-decision metric can be improved thanks the notion of template even is no 
+template is actually build using the inequality mentioned previously.
+
+Let $H_i$ be one of the considered hypothesis by a DPA attack, and $H_v$ the value of the selection function.
+To those two equally possible hypothesis can be applied the inequality presented earlier. Then the obtained metric is not evaluable because two parameters are not known problem solved by giving an estimation of those two.
+
+This attack is among the most powerful side channel attack, because it can efficiently adapted to makes algorithms,
+this is this attack, in its naive version, that Inspector implemented note however that the selection of the point 
+of interests is critical.
+
+
+\section{Template attacks on symmetrical algorithms}
+\subsection*{What has been published}
+\begin{itemize}  
+	\item[-] In 2003, Chari\textit{\&al.} in 
+\lokiquote{ches-2002-chari}
+gave the first description of a two steps side channel attacks, with elaborated model for noise.
+
+	\item[-] In 2003, Agrawal\textit{\&al.} in 
+\lokiquote{ches-2002-agrawal} 
+improved significantly the template attack combining multiple side channel 
+such as power and EM simultaneously.
+They also improved the DPA attack defining a new metric by using the Gaussian assumption, turning 
+	 the DPA attack to a two steps attacks and if the setup  phase was impossible to perform
+	they give a way to approximates this one. Quoting Elisabeth Oswald 'Template based DPA attack 
+	constitute the strongest the strongest kind of DPA attack.
+			  
+	\item[-] In 2005, Agrawal\textit{\&al.} in 
+\lokiquote{ches-2005-agrawal}
+defined the 'single bit template attack' where the targeted variable is a single bit
+and the 'template enhanced DPA attack' mixing template and DPA attack (Warning)	 
+They also break a masked DES and AES basically building template with a chip with a biased RNG 
+and then exploiting those on the same chip with a perfect RNG.
+
+
+	\item[-] In 2006, Mangard\textit{\&al.} in 
+	\lokiquote{ctrsa-2007-oswald} 
+the authors claim that 'in the scenario of template attacks, masking does not improve the security of an implementation... '
+They used template based DPA attacks to attack masked version of the DES and AES, 
+reference to the masks in \lokiquote{ches-2001-akkar} and 
+\lokiquote{sacrypt-2004-bloomer},
+with devastating conclusions, if an biased PRNG is available during the setup phase!
+The attack phase just this line is changing.
+\begin{center}$$\mbox{\huge}{ \mathscr{P}(t | h_j ) = 
+{ \sum_j \mathscr{P}(t | h_j \wedge m).\mathscr{P}(m) } }  $$
+\end{center} 
+
+In this same paper, combination of HODPA and template attack is also studied: to
+unleash the maximum of correlation in a 2$^{nd}$ order attack or to force a bias 
+in the collected traces. 
+
+	\item[-] In 2007, El Aabid\textit{\&al.} in 
+	\lokiquote{eprint-2007-aabid} 
+	claimed that the real target of template attack was the key schedule. 
+Instead of the naive definition of $h$ sorting the traces depending on value of the sub-key used,
+he improved the sorting using the following functions:\\\
+$h= k $\\
+$h= k \oplus LS(k)  $\\
+$h= k \oplus LS^2(k)  $\\
+where $LS$	is the left shift function used in the key schedule of the DES algorithm. 
+In this article  they recognize that the first function is suitable for a 'blind' attacker
+
+\item[-] \lokiquote{phdthesis-ElAabid-2012}.
+\end{itemize}
+
+\subsection*{Definitions for $h$}
+Here only the case of the DES algorithm is considered and 
+$Input$ and $Output$ will represent the respective input and output of some S-box.
+
+			\begin{tabularx}{\linewidth}{ p{4cm}  p{4cm}  p{4cm}}
+			$ h  = Input$						& $2^{12}$ templates to build& \\
+			$ h  = k $ 							& $2^{6}$ templates to build& \\
+			$ h  = k \oplus LS(k)  $ 			& $2^{6}$ templates to build& \\
+			$ h  = k \oplus LS^2(k)  $ 			& $2^{6}$ templates to build& \\
+			$ h  = Output $						& $2^{4}$ templates to build& \\
+			$ h  = \omega_\mathcal{H}(Input) $ 	& $5$ templates to build& 
+			\end{tabularx}	
+			
+			
+\subsection*{Matrix}
+
+\begin{center}
+\begin{savenotes}
+\begin{tabular}{p{.5cm}p{.5cm}p{.5cm}p{.5cm}p{4.5cm}}
+           \rotatebox{70}{ Naked DES } 
+         & \rotatebox{70}{ Splited DES }
+    	 & \rotatebox{70}{ Masked DES 
+				\footnote{The transforming masked method
+				\lokiquote{ches-2001-akkar}
+				 (one mask)}	} 
+    	 & \rotatebox{70}{ Masked DES 
+    	 		\footnote{The transforming masked method
+		    	 \lokiquote{ches-2001-akkar} 
+		    	 (two masks)} }    	 			
+    	 & References\\    	 
+\end{tabular}\\
+\begin{tabular}{|p{.5cm}|p{.5cm}|p{.5cm}|p{.5cm}|p{4.5cm}|}   	
+	\hline  $\bullet$ & & & & \cite{ches-2002-chari}\\
+	\hline  $\bullet$ & & & & \cite{ches-2002-agrawal} \\
+	\hline  $\bullet$ & & $\circ$ & & \cite{wisa-2004-rechberger} \\
+	\hline  $\bullet$ & & $\bullet$ & ? & \cite{ches-2005-agrawal}\\
+	\hline  $\bullet$ & & & & \cite{eprint-2007-aabid}\\				
+	\hline 
+\end{tabular}\\
+\end{savenotes}
+\end{center}
+
+
+
+\newpage
+\section{Template attacks on asymmetrical algorithms}
+
+In this section we only consider the two most used asymmetrical algorithms, 
+namely RSA and ECC, because of their common point that is they share a family of algorithms 
+to perform the central operation on which mainly depends their security. 
+
+This is modular exponentiation for RSA and scalar multiplication for ECC, both 
+taking place in some finite fields. In RSA the the first 
+of those algorithms is the well known square-and-multiply algorithm to which is 
+corresponding the double-and-add algorithm for elliptic curves.
+
+\subsection*{What has been published}
+
+\begin{itemize}  
+	\item[-] In \lokiquote{wisa-2008-medwed} is
+	showed the feasibility of template attacks on asymmetrical algorithm:
+	on a unmasked ECDSA implemented with the double-and-add-always algorithm
+	and also with the sliding window version of this algorithm. They gave also conditions
+	so their attack to work with scalar blinding \footnote{corresponding to exponent blinding in RSA}
+	and for Point Blinding \footnote{corresponding to message blinding in RSA}.
+	A counter measure is to randomize the base point \footnote{corresponding to nothing in RSA}.
+	
+	\item[-] In \lokiquote{wisa-2008-herbst} is
+	showed the feasibility of template attacks on masked asymmetrical algorithm:
+	on a RSA implemented with a masked version of the Montgomery ladder exponentiation.
+		
+	
+	\item[-] In \lokiquote{sacrypt-2008-amiel} is
+	showed a theoretical presentation of template attacks on atomic versions of 
+	the double-and-add algorithm and of the square-and-multiply algorithm.
+	In this article is said that a device with a high level of side channel 
+	leakage, even with a masked exponent, could be vulnerable to their attack.
+	
+		
+	\item[-] In \lokiquote{ijis-2011-hanley} is
+	showed an extension of the previous article giving a practical presentation 
+	of template attacks	on \textit{atomic} versions of the double-and-add algorithm 
+	and of the square-and-multiply algorithm.
+	Plus, the attack described in this paper do not require any open device to built
+	its template. 	
+	
+	\item[-] \lokiquote{acns-2011-schindler}
+	revisit the paper of P.A Fouque "Power attack on small RSA public exponent" 
+	which can if some bits exponent are known the recover the all exponent, 
+	to make it more error tolerant and then more practical. Case of Square and always Multiply
+	or for Double and always Add.
+\end{itemize}
+
+\section{The stochastic attack}
+\label{The_stochastic_attack}
+Schindler\textit{\&al.} in \lokiquote{ches-2005-schindler} 
+publish a variant of template attack: the Stochastic attack also known as the regression model.
+This attack find the key answering to the following question:
+'among all the linear leakage models that can be build with $N$ simulations of the targeted variable 
+and the recorded trace, which in the end corresponds the best to the recorded trace ?'
+
+First let's assume that  the deterministic part of the leakage is simply
+$\delta(x) = \alpha_{-1}  + \sum \limits_{i=0}^{n} \alpha_i.x_i $ and that the target variable $h$ got $n$ bits, 
+ and that $ \left( l_{\hat{h},i}\right)_{1 \leq i \leq N}$ is one measure set of $N$ measurements.
+ 				\begin{equation*}
+				L = 
+				\begin{bmatrix}
+				l_{{h},1}\\
+				\vdots\\
+				l_{{h},N}\\
+				\end{bmatrix}
+				\end{equation*}
+Now for every possible value $\hat{h}$ of $h$ let's assume that
+$ \left( v_{\hat{h},i}\right)_{1 \leq i \leq N}$ are the $N$ corresponding hypothesis about the deterministic 
+part of the leakage. And let's take a look at the contribution of each bits of $v$:
+				\begin{equation*}
+				M = 
+				\begin{bmatrix}
+				1 & v_{\hat{h},1}[0]  &\ldots & v_{\hat{h},1}[n-1] \\
+				  & \vdots &          & \vdots \\
+				1 & v_{\hat{h},N}[0]  &\ldots & v_{\hat{h},N}[n-1]
+				\end{bmatrix}
+				\end{equation*}
+The leakage model given by the hypothesis '$h = \hat{h}$' is:
+\begin{center}
+$\alpha_{\hat{h}} = (\alpha_{\hat{h},{-1}}, \hdots , \alpha_{\hat{h},{n-1}}) = ( M^\top .M)^{-1} . (M^\top .L)$
+\end{center}
+And the signal of decision for this hypothesis is:
+\begin{center}
+$\Delta_{\hat{k}}  = \frac{|L-M.\alpha_{\hat{k}}|_2}{\sqrt{Var(L)}} $
+\end{center}
+Then the most probable value for $h$ is the one minimising  $\Delta_{\hat{k}}  $
+
+Question: some claim that the stochastic method is just a normal template attack replacing
+the covariance matrix for the identity matrix... ?
+
+\newpage
+\section{The power consumption model \& notations}
+
+The classical presentation is the following one. It is assumed when considering 
+a sensitive variable $V_h$ \footnote{This notation ... }
+, the leakage, $L$ to be composed of two parts: 
+a deterministic part, $\delta$ and the noise independent from $V_h$, \textit{i.e.} 
+independent from the plain text and the key.
+\begin{center}
+	$L_h = \delta(V_h)  + B$
+\end{center}
+Then if $N$ measurements are done, the previous equation implies:
+\begin{center}
+	$\forall i \leq N, \hspace{5mm}  l_{h,i}= \delta(v_{h,i})  + b_i$
+\end{center}
+One of the more general \textit{symmetrical} model for approaching the function $\delta$ of a variable $x$ of $d$ is given by:
+\begin{center}
+				$\delta(x) = \alpha_{-1}  + \sum \limits_{i=0}^{n} \alpha_i.x_i 
+			+ \sum \limits_{i_1 \neq i_2=0}^{n} \alpha_{i_1,i_2}.x_{i_1,i_2} + \hdots + 
+			  \sum \limits_{i_1 \neq \hdots \neq i_d=0}^{n} \alpha_{i_1,\hdots,i_d}.x_{i_1,\hdots,i_d} $
+\end{center} 
+Hypothesis to simplify this model:
+\begin{itemize}
+	\item[-LID:]Leakage Interpolation Degree:\\
+	A good approximation of $\delta$ can be obtained with a polynomial of smaller multivariate degree, $n <  d$.
+	\item[-IBL:]Independent Bit Leakage:\\
+	A good approximation of $\delta$ can be obtained with a linear function, $n=1$.
+	\item[-EHQ:]Equivalent Homogeneous Contribution:\\
+	A good approximation of $\delta$ can be obtained assuming that 
+	each homogeneous polynomial constituting $\delta$ have independently the same coefficient.
+\end{itemize}
+Questions :\\
+DPA/CPA etc IBL ?, EHQ ?\\
+Template attacks LID with n=2? EHQ ?\\
+
+
+

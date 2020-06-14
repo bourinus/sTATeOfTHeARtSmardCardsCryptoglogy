@@ -1,0 +1,238 @@
+\newpage
+\subsection{Reduction}
+\label{RSA_reduction}
+
+Problem: $ T $ a number to reduce modulo $ N $, respectively $2n$ and $n$ bit long.\\
+Aim: to deal efficiently with reduction modulo $N$, computation in $\mathbb{Z}/{N \mathbb{Z}}$.\\\\
+\underline{References:}\\
+\cite{crypto-1993-bosselaers}\\
+\cite{arith-2007-hasenplaugh}\\
+\cite{eprint-2014-zhengjun}
+
+Duality between Multiplication and Modular Reduction: \cite{eprint-2005-fisher}
+\begin{itemize}
+	\item 
+		\begin{tabularx}{\linewidth}{ p{14.5cm} p{3cm} }
+		Euclidean method method -
+		\textit{2000BC}- & $0\%$ 
+	 	\end{tabularx}
+	 		A complete Euclidean division is achieved:\\
+	 		$ T = q N + r $ with $ 0 \leq r < N$\\\\
+			\underline{Example:}\\
+			Let's to be computed $x.y \mod N$  with $N = 119$, and $x = 63$, $y = 57$:\\
+			$63.57 \mod 119 = 3591 \mod 119 = 119.30+21 \mod 119 = 21 \mod 119$\\
+			But this requires a costly division which process is hidden...
+		 		 
+	\item
+		\begin{tabularx}{\linewidth}{ p{14.5cm} p{3cm} }
+		Knuth's "scholar" method - \textit{1969}- & $0\%$	  
+		\end{tabularx}
+		  	Improve the previous algorithm in the sense that only a 
+		  	partial Euclidean division is performed.	  	
+			
+	\item 
+		\begin{tabularx}{\linewidth}{ p{14.5cm} p{3cm} }
+		Montgomery's reduction - \cite{ieeetc-2005-montgomery} - & $60\%$ \\
+		\end{tabularx}
+			Montgomery reduction algorithm is a pillar of modern modular calculus.
+			It exists in many versions, with computation by bloc or globally
+			with interleaved multiplication or not, and many more.\\
+
+			Computation by isomorphism: computation are not performed in the original group 
+			$\mathbb{Z}/{N \mathbb{Z}}$ but rather in another 
+			representation of this ring.\\
+			for $R$ co-prime with $N$, group isomorphism
+			for $R$ co-prime with $N$ :
+			$
+			\phi\left\{
+			    \begin{array}{c}
+			     \mathbb{Z}/{N \mathbb{Z}} \longrightarrow {\mathbb{Z}/{N \mathbb{Z}}}^{'}  \\
+			      \;\;\;\;x \longmapsto x.R
+			    \end{array}
+			\right.
+			$
+		    the operation corresponding
+		    	    \footnote{
+		    	Since $\phi(a).\phi(b) = a.b.R^2$, and  $\phi^{-1}(a.b.R^2)=a.b.R$
+		    	}to the multiplication in $\mathbb{Z}/{n \mathbb{Z}}$
+		    is $M_R (a,b)\mapsto a.b/R$
+	
+		    	   		  		   
+			\begin{algorithm}
+				\KwIn{
+					$ T \in \mathbb{Z}/{R.N \mathbb{Z}}$ to reduce modulo $ N $ \\
+					$ R, N \in \mathbb{Z}/{N \mathbb{Z}}$ such that $ pgcd(R,N) =1$\\
+					$ N^{'} \in \mathbb{Z}/{R \mathbb{Z}}$ such that $R.R^{'}-N.N^{'}=1$
+				}
+				\KwOut{$ T.R^{-1} \mod  N $ }
+				$m \leftarrow	 T.N^{'} \mod R$ \;
+				$t \leftarrow	 (T+m.N).R^{-1}$ \;
+				\If {$t \geq n$}{
+					$ t \leftarrow T \mod  N $\;
+					} 
+				\Return{$ t $}\;
+				\caption{Montgomery's reduction algorithm $redct$ function}
+			\end{algorithm}				
+			we have  an algorithm:
+			\begin{itemize}
+				\item achieving a division by $R$, that can be chosen under condition
+				\item reducing its input modulo $N$
+				\item without divisions by $N$, if $T \leq R.N$
+			\end{itemize}
+
+		\textbf{Proof:}
+			It is clear that $ T = T + m.N \mod N $, with $R.R^{'}-N.N^{'}=1$ and 
+			$ m = T.N^{'} \mod R$ we have: $  T + m.N = T- (T \mod R)$ then 
+			$  T + m.N \leq RN + RN$ so that $ 0 \leq t \leq 2N $.
+
+			Function  $redct$is used to multiply in Montgomery domain but also 
+			to as 'transfer':\\
+			Thanks to: $ redct(x.R^2) = x.R \mod N = \phi(x) $ and $redct(x) = x.R^{-1} \mod N = \phi^{-1}(x) $.
+
+			In practice we can choose $R$ regarding the modulus pre-compute $R^2 \mod N$, $R^{-1} \mod N$\\
+ 		  
+		\underline{Example:}
+			Let's to be computed $x.y \mod N$  with $N = 119$, and $x = 63$, $y = 57$:\\
+			Define isomorphism :
+			choose a hardware compatible $R$ with the condition $R > N$,  $R =2^7 = 128$\\ 
+			Precomputed values : $R^2 \mod N = 81$, $R^{-1} \mod  N = 53$\\
+			Transfer data into Montgomery Domain: 
+			\begin{center}
+				$ \phi(x) = x.R \mod N  = redct(x.R^2) = redct(63.81) = 91 $\\
+				$ \phi(y) = y.R \mod N  = redct(y.R^2) = redct(57.81) = 37$\\
+			\end{center}
+			Multiplication in Montgomery domain: 
+			\begin{center}
+				$ M_R(\phi(x),\phi(y)) = redct(91.37.53) \mod 119 = 70$
+			\end{center}
+			Return the result from the Montgomery domain: 
+			\begin{center}
+				$x.y \mod N = redct(70) = 21$	
+			\end{center}
+			
+			All the division was by $R$, if $R$ is a power of two for the hardware this only a shift. 
+			Secondly $R^{2}$ and $R^{-1}$ are precomputed values.	  
+					   
+
+	\item \begin{tabularx}{\linewidth}{ p{14.5cm} p{3cm} }
+		Barrett's reduction -\textit{\cite{crypto-1986-barrett}} & Widely used 
+		\end{tabularx}
+		Involves one pre-computation: 
+		$\mu = \lfloor \frac{2^{2n}}{N} \rfloor$.\\
+		The reduction take the form:
+		\begin{center}
+			$R = T - \lfloor \lfloor \frac{T}{2^{n}} \rfloor \frac{\mu}{2^{n}} \rfloor N$\\
+		\end{center}		
+
+		Requires: two +1 n-bit multiplications and on subtraction.
+
+		\underline{Example:}
+			$x.y \mod N$  with $N = 119$, and $x = 63$, $y = 57$\\
+			Precomputed values :
+			$\mu  = \lfloor 2^{16}/119 \rfloor  = 550$\\
+			
+			The reduction take the form\\
+			$R = 3591 - \lfloor \lfloor \frac{3591}{2^{8}} \rfloor \frac{550}{2^{8}} \rfloor 119$\\
+			$R = 3591 - \lfloor 14 \times 2.148 \rfloor 119$\\
+			$R = 3591 - 30.119$\\
+			$R = 3591 - 3570$\\
+			$R = 21 $ 
+
+
+	\item \begin{tabularx}{\linewidth}{ p{14.5cm} p{3cm} }
+		Iterative folding -\textit{\cite{arith-2007-hasenplaugh}} & $0\%$ 
+		\end{tabularx}
+		Iterates a divide and conquer approach to have smaller multiplication, in Barrett's algorithm. This involve more pre-computations: 
+		$\forall i, 1 \leq i \leq F, M^{(i)} = 2^{(1+2^{-i})n}$ \\
+		and for the final Barrett step :
+		$ \mu = \lfloor \frac{2^{2n}}{M}  2^{2^{-F}n}\rfloor$\\
+
+		The reduction take the form\\
+		$N^{(0)} =N$\\
+		$N^{(i)} =N^{(i-1)} \mod M^{(i)} + \lfloor \frac{N^{(i-1)}}{M^{(i)}}  \rfloor M^{(i)}\forall i, 1 \leq i \leq F$\\
+		$	R = N^{(F)} - \lfloor \lfloor \frac{N^{(F)}}{2^{(1+2^{-F})n}} \rfloor \frac{\mu}{2^{2^{-F}n}} \rfloor M$\\
+
+		Optimal for $F=2$
+
+		\underline{Example:}
+			Let's to be computed $x.y \mod N$  with $N = 119$, and $x = 63$, $y = 57$:\\
+			Precomputed values : $N$ is 8 digits, we set $F=2$:\\
+		$
+		M^{(1)} = 2^{(1+2^{-1})8} = 2^{12} = 4096 \\
+		M^{(2)} = 2^{(1+2^{-2})8} = 2^{10} = 1024$ \\
+		And for the final Barrett step :\\
+		$ \mu = \lfloor \frac{2^{16}}{119} 2^{2^{-2}8} \rfloor = \lfloor \frac{2^{16}}{119} 4 \rfloor = 2202$\\
+
+		The reduction take the form\\
+		$N^{(0)}= 3591$\\
+		$N^{(1)}= 3591 \mod 2^{12} 	+ \lfloor \frac{3591}{2^{12}}  \rfloor M^{(1)}
+				= 3591 \mod 2^{12} 				+ \lfloor \frac{3591}{2^{12}}  \rfloor 4096 = 3591$\\
+		$N^{(2)}= N^{(1)} \mod 2^{(1+2^{-2})8} 	+ \lfloor \frac{3591}{2^{10}}  \rfloor M^{(2)}
+				= 3591 \mod 2^{10} 				+ \lfloor \frac{3591}{2^{10}}  \rfloor 1024 = 519 + 3072 =3591 $\\		
+		$	R   = N^{(2)} - \lfloor \lfloor \frac{N^{(2)}}{2^{(1+2^{-2})n}} \rfloor \frac{\mu}{2^{2^{-2}n}} \rfloor M$\\
+		$	R   = 3591 - \lfloor \lfloor \frac{3591}{2^{10}} \rfloor \frac{\mu}{2^{2}} \rfloor 119$\\
+		$	R   = 3591 - 3 550.5* 119$\\
+
+
+			$\mu  = \lfloor 2^{16}/119 \rfloor  = 550$\\
+			
+			The reduction take the form\\
+			$R = 3591 - \lfloor \lfloor \frac{3591}{2^{8}} \rfloor \frac{550}{2^{8}} \rfloor 119$\\
+			$R = 3591 - \lfloor 14 \times 2.148 \rfloor 119$\\
+			$R = 3591 - 30.119$\\
+			$R = 3591 - 3570$\\
+			$R = 21 $ 
+
+
+
+	\item 
+		\begin{tabularx}{\linewidth}{ p{14.5cm} p{3cm} }
+		Sedlack's reduction -\textit{1987}- & $0\%$ 
+		\end{tabularx}
+		
+	\item 
+		\begin{tabularx}{\linewidth}{ p{14.5cm} p{3cm} }
+		Quisquater reduction -\textit{1990}- & $0\%$  
+		\end{tabularx}	
+		Source: \cite{birthday-2012-joye}		  
+		Patent protected
+	\item 
+		\begin{tabularx}{\linewidth}{ p{14.5cm} p{3cm}}
+		ZDN algorithm -\textit{Infineon technologies 1990's}-  & $0\%$  
+		\end{tabularx}
+			
+		\noindent	
+		A far effective, hardware-compatible algorithm, ZDN based modular multiplication
+		was developed by Infineon. ZDN based modular multiplication replaces the
+		multiplication and reduction operations with a single operation, which the
+		system can execute in a single clock-cycle. This algorithm implements a 
+		look-ahead Booth (LABooth) multiplication with ZDN based 
+		(Zwei Drittel N , 2/3N in German) modular reduction (LARed). 
+		This algorithm further improves on register constraints because it ensures
+		that the partial product remains at approximately 2/3N. With this algorithm
+		the multiplication and modular reduction are calculated completely in parallel
+		WTF!.
+		\vspace*{3mm}
+
+		VS side channel cryptanalysis:\\
+		* immune against SvsM discrimination		  
+\end{itemize} 
+
+\textit{Barrett vs Montgomery}\\
+Similarities:\\
+    Both require pre-computing various constants for a given modulus $N$. Their input range is $[0,N^2)$. \\
+    Their last las step lies in $[0,2n)$, with a final fix-up step to reach the output range of $[0,n)$.\\
+    They perform 2 internal multiplications per reduction.\\
+    Their reduction phases avoid division or remainder by non-powers-of-2.
+
+Differences:\\
+    Montgomery reduction requires expensive conversion into and out of 'Montgomery form', whereas Barrett reduction operates on regular numbers directly. \\
+    Montgomery is based on modular congruences and exact division, whereas Barrett is based on approximating the real reciprocal with bounded precision. \\
+
+Consumption: ''\\
+    If the modulus is $n$ bits long, 
+    Montgomery: two $n$-by-$n$ bit multiplications yielding $2n$ bits. 
+    Barrett: one $2n$-by-$n$ bit multiplication yielding $3n$ bits, plus a $n$-by-$n$ bit multiplications yielding $2n$ bits, 
+
+Usage:\\
+    Montgomery reduction is suitable for modular exponentiation but not for working with various unrelated numbers where Barrett reduction is a good candidate for both,but more expensive.\\

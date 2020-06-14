@@ -1,0 +1,52 @@
+\newpage
+\subsubsection{The Montgomery Ladder}
+\begin{itemize}
+	\item
+		\begin{tabularx}{\linewidth}{ p{16cm} p{1.5cm} }
+		Montgomery ladder technique - \lokiquote{ches-2002-joye} -  & $0\%$ 
+		\end{tabularx}			
+			\begin{algorithm}[h]
+				\KwIn{$x$, ${d =  d_{t-1} d_1 d_0}_2$}
+				\KwOut{ $ y   =  x^d \mod n$ }
+				$ R_0 \leftarrow 1$ \; $ R_1 \leftarrow x$ \;		
+				\For{$i  = t-1$ \textbf{to} $0$}{			 
+					\If{ $d_i= 0$ }{ 	
+						$ R_1 \leftarrow R_0 \times R_1$\;
+						$R_0 \leftarrow {R_0}^2 $	}										
+					\Else{ 						
+						$ R_0 \leftarrow R_0 \times R_1$\;
+						$ R_1 \leftarrow {R_1}^2 $	 
+						} 													 	
+				}									 
+				\Return{$ R_0 $}
+				\caption{Montgomery ladder technique}
+			\end{algorithm}			
+			
+%  * R0 := 0
+%  * R1 := P
+%  * for i from m to 0 do
+%     * if di = 0 then
+%        * R1 := R0 + R1
+%        * R0 := 2R0
+%     * else
+%        * R0 := R0 + R1
+%        * R1 := 2R1
+%  * Return R0
+			
+		\underline{Example:} Montgomery ladder technique: \\
+			$n=23_{10}=10111_2$
+			
+			\begin{tabularx}{\linewidth}{ p{2cm} p{2cm} }
+				$R_0=1$ 		& $R_1=x$ \\
+				$R_0=x^{1}$		& $R_1=x^{2}$ \\
+				$R_0=x^{2}$ 	& $R_1=x^{3}$ \\
+				$R_0=x^{5}$ 	& $R_1=x^{6}$ \\
+				$R_0=x^{11}$ 	& $R_1=x^{12}$ \\
+				$R_0=x^{23}$ 	& $R_1=x^{24}$ \\
+			\end{tabularx}	
+			Note that the following powers of $x$ are successively computed:
+			$x$ $x^2$ $x^3$ $x^4$ $x^5$ $x^6$  $x^{11}$ $x^{12}$ $x^{23}$ $x^{24}$.
+			
+		\textit{VS side channel cryptanalysis}\\			
+			This technique is vulnerable to the doubling attack
+\end{itemize}

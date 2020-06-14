@@ -1,0 +1,193 @@
+\newpage
+\subsubsection{NAF algorithms}
+\label{expNAFalgorithms}
+
+Most of exponentiation algorithms can be modified to be adapted to NAF representation,  
+\textbf{algorithms \ref{alg:LtoR_NAF_SM} and 
+\ref{alg:RtoL_SM_On-the-fly_Binary_NAF_conversion} } illustrate this on a S\&M algorithm 
+point out that NAF-conversion can be performed on the fly if necessary.\\
+
+Most important is the is the difference between NAF representation applied to RSA
+and applied to ECC
+see \textbf{algorithms \ref{alg:ary_method_NAF_version_for_coslty_inversion} 
+and \ref{alg:2k-ary_method_NAF_version_for_free_inversion} }, 
+for ECC certain curve allow almost 'free' inversion, 
+the precomputed value can be optimized.
+
+\begin{itemize}
+	\item  	
+		\begin{tabularx}{\linewidth}{ p{16cm} p{1.5cm}} 
+		LtotR S\&M , NAF version-
+		\textit{Reitweisner's NAF 1960}-  & $0\%$ \\ 	
+		\end{tabularx}
+			Simply apply the binary NAF representation to the exponent fastening 
+			the square and multiply algorithm.
+			This version of S\&M requires a saved pre-computation: $x^{-1}$.	
+								
+			\begin{algorithm}[h]
+				\KwIn{$x$, ${d =  d_{t-1} d_1 d_0}_2$}
+				\KwOut{ $ y   =  x^d $ }
+				Pre-compute $x^{-1}$ \;	
+				$y \leftarrow 1$\;
+				\For{$i  = t-1$ \textbf{to} $0$}{
+					$y \leftarrow y^2 $ \;	
+					\lIf{ $d_i=  1$ }{	$y \leftarrow y \times x $	} 		 
+					\lIf{ $d_i= -1$ }{ 	$y \leftarrow y \times x^{-1} $	} 
+				}									 
+				\Return{$ y $}
+				\caption{LtoR NAF S\&M}
+				\label{alg:LtoR_NAF_SM}
+			\end{algorithm}					
+			
+		\underline{Example :} LtoR S\&M, NAF version-
+		\textit{Reitweisner's NAF 1960}\\					
+				Let's compute $x^{n}$ with 
+				$n=23_{10}=10111_2 = \{ \;1,\; 0,\; -1,\; 0,\; 0,\; -1\; \}_{2NAF}$:
+							
+			\begin{tabularx}{\linewidth}{ p{2cm} p{12cm} p{2cm}}
+				$y:=x$   & 	 					 & $(y=x)$\\
+				$y:=x^2$ & 						 & $(y=x^{2})$\\
+				$y:=y^2$ & $y:=y \times x^{-1}$	 & $(y=x^3)$\\
+				$y:=y^2$ &						 & $(y=x^{6})$\\
+				$y:=y^2$ &						 & $(y=x^{12})$\\
+				$y:=y^2$ & $y:=y \times x^{-1}$	 & $(y=x^{23})$\\
+			\end{tabularx}
+			Remark that the intermediate computed exponentiations:			
+			$ x^{1},\; x^{2},\; x^{4},\; x^3,\; x^{6},\; x^{12},\; x^{24},\;x^{23} $,
+			length 8.
+			\vspace{5mm}	
+								
+	\newpage
+	\item  	
+		\begin{tabularx}{\linewidth}{ p{16cm} p{1.5cm}} 
+		RtoL S\&M Binary-NAF 
+		-  & $0\%$ \\ 	
+		\end{tabularx}	
+		
+		\begin{algorithm}[h]
+	 		\KwIn{  $x, {d =  d_{t-1} d_1 d_0}_{2-NAF}$}
+			\KwOut{ $ y   =  x^d \mod n$ }
+			$l \leftarrow x$ \;		
+			$y \leftarrow 1$ \; 
+			\For{ $i \gets 0$ \textbf{to} $t-1$}{							 		
+				\lIf{$d_i= 1$}{ $ y = l      \times y$ }
+				\lIf{$d_i=-1$}{ $ y = l^{-1} \times y$ } 	
+			$l \leftarrow l^2$					
+			}
+			\Return{$ y $}\;
+			\caption{RtoL S\&M Binary-NAF}
+			\label{alg:RtoL_SM_On-the-fly_Binary_NAF_conversion}
+		\end{algorithm}	
+
+	\item  	
+		\begin{tabularx}{\linewidth}{ p{16cm} p{1.5cm}} 
+		RtoL S\&M  Binary-NAF On-the-fly conversion 
+		-  & $0\%$ \\ 	
+		\end{tabularx}	
+
+		The following algorithm interesting is not, it just illustrate the 
+	    fact that a NAF conversion can be done inside or outside the exponentiation 
+	    algorithm, and this information is crucial on a SPA point of view.
+				
+		\begin{algorithm}[h]
+	 		\KwIn{$x, {d =  d_{t-1} d_1 d_0}_{2-NAF}$}
+			\KwOut{ $ y   =  x^d \mod n$ }
+			$y = 1$ \; $l \leftarrow x$ \;		
+			\While{ $d \geq 1$}{											 
+			\If{ $d \mod 2=1$  }
+			{
+			$u \leftarrow 2-(k \mod 4)$ \;$d \leftarrow d-u$ \;			
+			\lIf{$u= 1$}{ $ y = x     \times y$  }
+			\lIf{$u=-1$}{ $ y = x^{-1} \times y$ }								 	
+			} 
+			$ d \leftarrow d/2$ \; $l \leftarrow l^2$					
+			}
+			\Return{$ y $}\;
+			\caption{RtoL S\&M Binary-NAF On-the-fly conversion}
+			\label{alg:RtoL_SM_On-the-fly_Binary_NAF_conversion}
+		\end{algorithm}	
+
+\newpage		
+	\item  	
+		\begin{tabularx}{\linewidth}{ p{16cm} p{1.5cm}}
+		Window NAF method - For number exponentiation
+		\textit{Reitweisner's NAF 1960}-  & $0\%$ \\ 
+			\end{tabularx}
+			\begin{algorithm}[h]
+					\KwIn{$x, {d =  d_{t-1} d_1 d_0}_{\omega NAF}$}
+						\KwOut{ $ x   =  x^d$ }
+						Compute $ x_i =x^i $ for 
+						$i\in \{ \pm 1,\pm 3, ..., \pm 2^{\omega-2}-1 \} $	\;
+						$y \leftarrow 1$\;					
+							\For{ $i\gets t-1$ \textbf{to} $0$ }{	
+								$ y \leftarrow y^2 $ \;	
+								\If{$d_i \neq 0$}{ 
+									$ y = y \times x_{d_i}$ \; 
+								}  													
+							}
+						\Return{$ y $}
+				\caption{LtoR $k$-widht binary NAF - for costly inversion}
+				\label{alg:ary_method_NAF_version_for_coslty_inversion}
+			\end{algorithm}	
+				
+		\underline{Example:} Window NAF method						
+				$n=23_{10}=10111_2  
+				= \{  1,\; 0,\; -1,\; 0,\; 0,\; -1,\; \}_{2NAF} $ \\						
+			Pre-computed values: $x^{2},\;x^{-1},\;x^{-2}$.
+						
+			\begin{tabularx}{\linewidth}{ p{2cm}p{2cm}p{8cm} p{2cm} }
+				$y:=1$   & 			& $y:=y\times x^{2} $	& $(y=x^{2})$\\
+				$y:=y^2$ & $y:=y^2$ & $y:=y\times x^{-2}$	& $(y=x^{6})$\\
+				$y:=y^2$ & $y:=y^2$ & $y:=y\times x^{-1}$	& $(y=x^{23})$\\
+			\end{tabularx}
+			Remark that the following intermediate exponentiation were computed:			
+			$ x^{1},\; x^{2},\; x^{4},\; x^{6},\; x^{8},\; x^{12},\; x^{24},\;x^{23} $,
+			length 8. 
+			\vspace{3mm}
+
+
+
+	\item  	
+		\begin{tabularx}{\linewidth}{ p{16cm} p{1.5cm}}
+		Window NAF method - For point multiplication
+		\textit{Reitweisner's NAF 1960}-  & $0\%$ \\ 
+		\end{tabularx}	
+		Here are saved negative pre-computations taking advantage
+		of the arithmetic of elliptic curves: for some curve inversion is trivial. 
+		On some faster curve (inversion sacrificed) it can become a problem:
+		some use projective coordinates for the accumulator Q,
+		possibly also for the $( P_i )_{i\in \{1,3, ..., 2^{\omega-1}-1 \} }$ 	
+		There exist other representation of curve slowing down their 
+		speed to the profit of the inversion. 		
+		 
+		The special shape of the precomputed, only even values, is linked to the 
+		size of the $ \omega $NAF form, which by definition as only odd values 
+		and not to any savings. 
+				
+			\noindent
+			Apply the $\omega $ NAF representation to the exponent fastening
+			the window method. This algorithm is built for ECC this way .\\		
+			\begin{algorithm}[h]
+				\KwIn{$x, {d =  d_{t-1} d_1 d_0}_{\omega NAF}$}
+					\KwOut{ $ Q   =  dP$ }
+					Compute $ P_{i} =d_{i}P $ for 
+					$i\in \{1,3, ..., 2^{\omega-1}-1 \} $	\;
+					$Q \leftarrow 0$	\;												 
+						\For{ $i = t-1$ to 0 }{	
+							$ Q \leftarrow 2Q $ \;	
+							\If{$d_i \neq 0$}{ 
+								\textbf{If} $ d_i > 0$ $ Q = Q + d_{i}P$ \;
+								\textbf{If} $ d_i < 0$ $ Q = Q - d_{-i}P$ 
+							}  																
+						}
+					\Return{$ P $}
+			\caption{$2^k$-ary method, NAF version - for cheap inversion}
+			\label{alg:2k-ary_method_NAF_version_for_free_inversion}
+		\end{algorithm}	
+\end{itemize}		
+
+
+				
+
+
+	
